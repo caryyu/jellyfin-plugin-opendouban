@@ -12,87 +12,107 @@ using Microsoft.Extensions.Logging;
 
 namespace Jellyfin.Plugin.Douban
 {
-    public class MovieProvider : BaseProvider, IHasOrder,
-        IRemoteMetadataProvider<Movie, MovieInfo>
+    public class MovieProvider : IHasOrder, IRemoteMetadataProvider<Movie, MovieInfo>
     {
         public string Name => "Douban Movie Provider";
         public int Order => 3;
 
-        public MovieProvider(IHttpClientFactory httpClientFactory,
-            IJsonSerializer jsonSerializer,
-            ILogger<MovieProvider> logger) : base(httpClientFactory, jsonSerializer, logger)
+        private ApiClient apiClient;
+        private ILogger logger;
+        private IHttpClientFactory httpClientFactory;
+
+        public MovieProvider(IHttpClientFactory httpClientFactory, IJsonSerializer jsonSerializer, ILogger<MovieProvider> logger)
         {
-            // Empty
+            this.apiClient = new ApiClient(httpClientFactory, jsonSerializer);
+            this.httpClientFactory = httpClientFactory;
+            this.logger = logger;
         }
-
-        public async Task<MetadataResult<Movie>> GetMetadata(MovieInfo info,
-            CancellationToken cancellationToken)
+        
+        public async Task<MetadataResult<Movie>> GetMetadata(MovieInfo info, CancellationToken cancellationToken)
         {
-            _logger.LogInformation($"[DOUBAN] Getting metadata for \"{info.Name}\"");
+            ApiSubject subject = null;
 
-            string sid = info.GetProviderId(ProviderID);
-            if (string.IsNullOrWhiteSpace(sid))
+            string sid = info.GetProviderId(BaseProvider.ProviderID);
+            if(!string.IsNullOrEmpty(sid))
             {
-                var searchResults = await Search<Movie>(info.Name, cancellationToken);
-                sid = searchResults.FirstOrDefault()?.Id;
+                logger.LogInformation($"[DOUBAN] GetMetadata of [sid]: \"{sid}\"");
+                subject = await apiClient.GetBySid(sid);
+            }
+            else if (!string.IsNullOrEmpty(info.Name))
+            {
+                List<ApiSubject> res = await apiClient.PartialSearch(info.Name);
+                if (res.Any())
+                {
+                    subject = await apiClient.GetBySid(res.FirstOrDefault().Sid);
+                }
             }
 
-            if (string.IsNullOrWhiteSpace(sid))
-            {
-                _logger.LogWarning($"[DOUBAN] No sid found for \"{info.Name}\"");
-                return new MetadataResult<Movie>();
-            }
+            var result = new MetadataResult<Movie>();
+            if(subject == null) return result;
 
-            var result = await GetMetadata<Movie>(sid, cancellationToken);
-            if (result.HasMetadata)
+            var x = subject;
+            int year = 0; int.TryParse(x?.Year, out year);
+            float rating = 0; float.TryParse(x?.Rating, out rating);
+            result.Item = new Movie
             {
-                _logger.LogInformation($"[DOUBAN] Get the metadata of \"{info.Name}\" successfully!");
-                info.SetProviderId(ProviderID, sid);
-            }
-
+                Name = x?.Name,
+                OriginalTitle = x?.Subname,
+                CommunityRating = rating,
+                Overview = "?",
+                ProductionYear = year,
+                HomePageUrl = "https://www.douban.com",
+                // ProductionLocations = [x?.Country],
+                // PremiereDate = null,   
+            };
+            result.Item.SetProviderId(BaseProvider.ProviderID, x.Sid);
+            result.QueriedById = true;
+            result.HasMetadata = true;
+            info.SetProviderId(BaseProvider.ProviderID, x.Sid);
             return result;
         }
 
-        public async Task<IEnumerable<RemoteSearchResult>> GetSearchResults(
-            MovieInfo info, CancellationToken cancellationToken)
+        public async Task<IEnumerable<RemoteSearchResult>> GetSearchResults(MovieInfo info, CancellationToken cancellationToken)
         {
-            _logger.LogInformation($"[DOUBAN] GetSearchResults \"{info.Name}\"");
+            List<ApiSubject> list = new List<ApiSubject>();
 
-            var results = new List<RemoteSearchResult>();
-
-            var searchResults = new List<Response.SearchTarget>();
-
-            string sid = info.GetProviderId(ProviderID);
+            string sid = info.GetProviderId(BaseProvider.ProviderID);
             if (!string.IsNullOrEmpty(sid))
             {
-                var subject = await GetSubject<Movie>(sid, cancellationToken);
-                searchResults.Add(new Response.SearchTarget
-                {
-                    Id = subject?.Id,
-                    Cover_Url = subject?.Pic?.Normal,
-                    Year = subject?.Year,
-                    Title = subject?.Title
-                });
+                logger.LogInformation($"[DOUBAN] GetSearchResults of [sid]: \"{sid}\"");
+                ApiSubject res = await apiClient.GetBySid(sid);
+                list.Add(res);
             }
-            else
+            else if (!string.IsNullOrEmpty(info.Name))
             {
-                searchResults = await Search<Movie>(info.Name, cancellationToken);
+                logger.LogInformation($"[DOUBAN] GetSearchResults of [name]: \"{info.Name}\"");
+                List<ApiSubject> res = await apiClient.PartialSearch(info.Name);
+                list.AddRange(res);
             }
 
-            foreach (Response.SearchTarget searchTarget in searchResults)
+            if(!list.Any()) 
             {
-                var searchResult = new RemoteSearchResult()
+                logger.LogInformation($"[DOUBAN] GetSearchResults Found Nothing...");
+            }
+
+            return list.Select(x =>
+            {
+                int year = 0; int.TryParse(x?.Year, out year);
+                return new RemoteSearchResult
                 {
-                    Name = searchTarget?.Title,
-                    ImageUrl = searchTarget?.Cover_Url,
-                    ProductionYear = int.Parse(searchTarget?.Year)
+                    ProviderIds = new Dictionary<string, string>{{ BaseProvider.ProviderID, x.Sid }},
+                    ImageUrl = x?.Img,
+                    ProductionYear = year,
+                    Name = x?.Name
                 };
-                searchResult.SetProviderId(ProviderID, searchTarget.Id);
-                results.Add(searchResult);
-            }
-
-            return results;
+            });
         }
 
+        public async Task<HttpResponseMessage> GetImageResponse(string url, CancellationToken cancellationToken)
+        {
+            logger.LogInformation("[DOUBAN] GetImageResponse url: {0}", url);
+            HttpResponseMessage response = await httpClientFactory.CreateClient().GetAsync(url).ConfigureAwait(false);
+            response.EnsureSuccessStatusCode();
+            return response;
+        }
     }
 }
