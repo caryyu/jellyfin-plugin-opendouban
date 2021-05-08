@@ -8,7 +8,8 @@ namespace Jellyfin.Plugin.Douban
 {
     public sealed class ApiClient
     {
-        private const string ApiBaseUri = "http://localhost:5000";
+        private string ApiBaseUri = "http://localhost:5000";
+
         private IHttpClientFactory httpClientFactory;
         private IJsonSerializer jsonSerializer;
 
@@ -16,6 +17,12 @@ namespace Jellyfin.Plugin.Douban
         {
             this.httpClientFactory = httpClientFactory;
             this.jsonSerializer = jsonSerializer;
+            var url = Plugin.Instance?.Configuration.ApiBaseUri;
+
+            if(!string.IsNullOrEmpty(url)) 
+            {
+                this.ApiBaseUri = Plugin.Instance?.Configuration.ApiBaseUri;
+            }
         }
 
         public async Task<List<ApiSubject>> FullSearch(string keyword)

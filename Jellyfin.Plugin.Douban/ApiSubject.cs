@@ -2,18 +2,41 @@ using System.Collections.Generic;
 
 namespace Jellyfin.Plugin.Douban
 {
-    public class ApiSubject 
+    public class ApiSubject
     {
         // "name": "哈利·波特与魔法石 Harry Potter and the Sorcerer's Stone",
-        public string Name { get; set; }
+        private string name;
+        public string Name
+        {
+            get
+            {
+                return name.Split(" ", 2)[0].Trim();
+            }
+            set
+            {
+                name = value;
+            }
+        }
+        public string FullName
+        {
+            get { return name; }
+        }
+        public string OriginalName
+        {
+            get
+            {
+                var names = name.Split(" ", 2);
+                return names.Length > 1 ? names[1].Trim() : names[0].Trim();
+            }
+        }
         // "rating": "9.1",
-        public string Rating { get; set; }
+        public float Rating { get; set; }
         // "img": "https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2614949805.webp",
         public string Img { get; set; }
         // "sid": "1295038",
         public string Sid { get; set; }
         // "year": "2001",
-        public string Year { get; set; }
+        public int Year { get; set; }
         // "director": "克里斯·哥伦布",
         public string Director { get; set; }
         // "writer": "史蒂夫·克洛夫斯 / J·K·罗琳",
@@ -36,5 +59,6 @@ namespace Jellyfin.Plugin.Douban
         public string Subname { get; set; }
         // "imdb": "tt0241527"
         public string Imdb { get; set; }
+        public string Intro { get; set; }
     }
 }

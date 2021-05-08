@@ -41,9 +41,10 @@ namespace Jellyfin.Plugin.Douban
             else if (!string.IsNullOrEmpty(info.Name))
             {
                 List<ApiSubject> res = await apiClient.PartialSearch(info.Name);
-                if (res.Any())
+                var has = res.Where<ApiSubject>(x => x.Name.Equals(info.Name) || x.OriginalName.Equals(info.Name));
+                if (has.Any())
                 {
-                    subject = await apiClient.GetBySid(res.FirstOrDefault().Sid);
+                    subject = await apiClient.GetBySid(has.FirstOrDefault().Sid);
                 }
             }
 
@@ -51,23 +52,24 @@ namespace Jellyfin.Plugin.Douban
             if(subject == null) return result;
 
             var x = subject;
-            int year = 0; int.TryParse(x?.Year, out year);
-            float rating = 0; float.TryParse(x?.Rating, out rating);
+            // int year = 0; int.TryParse(x?.Year, out year);
+            // float rating = 0; float.TryParse(x?.Rating, out rating);
             result.Item = new Movie
             {
+                ProviderIds = new Dictionary<string, string> {{BaseProvider.ProviderID, x.Sid}},
                 Name = x?.Name,
                 OriginalTitle = x?.Subname,
-                CommunityRating = rating,
-                Overview = "?",
-                ProductionYear = year,
+                CommunityRating = x?.Rating,
+                Overview = x?.Intro,
+                ProductionYear = x?.Year,
                 HomePageUrl = "https://www.douban.com",
                 // ProductionLocations = [x?.Country],
                 // PremiereDate = null,   
             };
-            result.Item.SetProviderId(BaseProvider.ProviderID, x.Sid);
+
+            info.SetProviderId(BaseProvider.ProviderID, x.Sid);
             result.QueriedById = true;
             result.HasMetadata = true;
-            info.SetProviderId(BaseProvider.ProviderID, x.Sid);
             return result;
         }
 
@@ -96,12 +98,12 @@ namespace Jellyfin.Plugin.Douban
 
             return list.Select(x =>
             {
-                int year = 0; int.TryParse(x?.Year, out year);
+                // int year = 0; int.TryParse(x?.Year, out year);
                 return new RemoteSearchResult
                 {
                     ProviderIds = new Dictionary<string, string>{{ BaseProvider.ProviderID, x.Sid }},
                     ImageUrl = x?.Img,
-                    ProductionYear = year,
+                    ProductionYear = x?.Year,
                     Name = x?.Name
                 };
             });
