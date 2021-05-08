@@ -1,16 +1,15 @@
 ---
-name: "jellyfin-plugin-douban"
-guid: "e325b8d5-5f54-447f-a38a-a951b933d22c"
-version: "0.0.1"
-nicename: "Douban"
-description: "Scrape the meta data from Douban"
+name: "jellyfin-plugin-opendouban"
+guid: "7834517B-1A9A-4758-9DD3-73FE02C98AA3"
+version: "1.0.0"
+targetAbi: "10.7.0.0"
+framework: "net5.0"
+nicename: "Open Douban"
+description: "Douban Scrapper"
 overview: >
-  TODO This is a longer description that can span more than one
-  line and include details about your plugin.
+  This plugin is another implementation based on [douban-openapi-server]
+  without any `ApiKey` preset
 category: "Metadata"
-owner: "libitum"
+owner: "caryyu"
 artifacts:
-  - "Jellyfin.Plugin.Douban.dll"
-build_type: "dotnet"
-dotnet_configuration: "Release"
-dotnet_framework: "netstandard2.0"
+  - "Jellyfin.Plugin.OpenDouban.dll"
