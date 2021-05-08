@@ -11,12 +11,20 @@ This plugin is another implementation based on https://github.com/caryyu/douban-
 
 ## Install Plugin
 
-Only support `10.7.0` and above and manual installation at current presence:
+Only support `10.7.0` and above
+
+Automatically:
+
+- China: https://gitee.com/caryyu/jellyfin-plugin-repo/raw/master/manifest-cn.json
+- U.S: https://github.com/caryyu/jellyfin-plugin-repo/raw/master/manifest-us.json
+
+Manually:
 
 ```shell
 dotnet build Jellyfin.Plugin.OpenDouban
-cp Jellyfin.Plugin.OpenDouban/bin/Debug/net5.0/linux-64/Jellyfin.Plugin.OpenDouban.dll <Jellyfin_config>/plugins/Jellyfin.Plugin.OpenDouban/
 ```
+
+Move `Jellyfin.Plugin.OpenDouban.dll` to `<jellyfin_config>/plugins/Jellyfin.Plugin.OpenDouban`
 
 > Note: Don't forget the folder of `plugins/Jellyfin.Plugin.OpenDouban`, otherwise, Jellyfin won't load
 
