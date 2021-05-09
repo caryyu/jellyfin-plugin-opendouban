@@ -51,16 +51,20 @@ namespace Jellyfin.Plugin.OpenDouban
                 return new List<RemoteImageInfo>();
             }
 
-            ApiSubject res = await apiClient.GetBySid(item.GetProviderId(OpenDoubanPlugin.ProviderID));
+            string sid = item.GetProviderId(OpenDoubanPlugin.ProviderID);
+            var primary = await apiClient.GetBySid(sid);
+            var dropback = await GetBackdrop(sid, cancellationToken);
 
-            return new List<RemoteImageInfo> {
+            var res = new List<RemoteImageInfo> {
                 new RemoteImageInfo 
                 {
-                    ProviderName = res.Name,
-                    Url = res.Img,
+                    ProviderName = primary.Name,
+                    Url = primary.Img,
                     Type = ImageType.Primary
                 }
             };
+            res.AddRange(dropback);
+            return res;
         }
 
         public bool Supports(BaseItem item)
