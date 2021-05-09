@@ -28,3 +28,25 @@ Move `Jellyfin.Plugin.OpenDouban.dll` to `<jellyfin_config>/plugins/Jellyfin.Plu
 
 > Note: Don't forget the folder of `plugins/Jellyfin.Plugin.OpenDouban`, otherwise, Jellyfin won't load
 
+## Docker Compose Reference
+
+```yaml
+version: "2"
+services:
+  doubanos:
+    image: caryyu/douban-openapi-server:c5c8edb
+    container_name: doubanos
+    network_mode: "host"
+    restart: "unless-stopped"
+
+  jellyfin:
+    image: jellyfin/jellyfin:10.7.5
+    container_name: jellyfin
+    user: <uid>:<gid>
+    network_mode: "host"
+    volumes:
+      - <path>/jellyfin-config:/config
+      - <path>/jellyfin-cache:/cache
+      - <path>/media:/media
+    restart: "unless-stopped"
+```
