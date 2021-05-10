@@ -54,8 +54,7 @@ namespace Jellyfin.Plugin.OpenDouban
             if (subject == null) return result;
 
             var x = subject;
-            // int year = 0; int.TryParse(x?.Year, out year);
-            // float rating = 0; float.TryParse(x?.Rating, out rating);
+
             result.Item = new Movie
             {
                 ProviderIds = new Dictionary<string, string> { { OpenDoubanPlugin.ProviderID, x.Sid } },
