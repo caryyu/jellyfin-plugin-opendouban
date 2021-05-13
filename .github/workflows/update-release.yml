@@ -1,0 +1,30 @@
+name: Publish Zip Packages
+
+on:
+  push:
+    tags: [ 'v*' ]
+
+jobs:
+  publish_zip_packages:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 5.0.x
+      - name: Install dependencies
+        run: dotnet restore
+      - name: Build
+        run: dotnet build --no-restore
+      - name: Get tag
+        id: get-version
+        run: echo "::set-output name=version::${GITHUB_REF/refs\/tags\//}"
+      - name: Publish Packages
+        run: |
+          docker run --rm -v $(pwd):/app --workdir /app \
+            -e SSH_PRIVKEY_GITHUB=${{ secrets.SSH_PRIVKEY_GITHUB }} \
+            -e SSH_PRIVKEY_GITEE=${{ secrets.SSH_PRIVKEY_GITEE }} \
+            -e TAG=${{ steps.get-version.outputs.version }} caryyu/jellyfin-plugin-releaser:ubuntu-16.04 \
+            bash /app/deploy-exec
+

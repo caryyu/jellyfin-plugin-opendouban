@@ -13,7 +13,7 @@ Automatically:
 - U.S: https://github.com/caryyu/jellyfin-plugin-repo/raw/master/manifest-us.json
 
 Manually:
-
+ 
 ```shell
 dotnet build Jellyfin.Plugin.OpenDouban
 ```
@@ -44,3 +44,14 @@ services:
       - <path>/media:/media
     restart: "unless-stopped"
 ```
+
+# About deploy-exec
+
+the `deploy-exec` script can be debugged by the following method:
+
+```shell
+docker run --rm -v $(pwd):/app -e SSH_PRIVKEY_GITHUB=$SSH_PRIVKEY_GITHUB -e SSH_PRIVKEY_GITEE=$SSH_PRIVKEY_GITEE -e TRAVIS_TAG=v1.0.3 --workdir /app caryyu-ubuntu:16.04 bash /app/deploy-exec
+```
+
+> ubuntu should have `git/jq/md5deep/zip` installed
+
