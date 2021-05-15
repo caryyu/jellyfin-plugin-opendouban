@@ -1,10 +1,11 @@
 #!/bin/bash
+set -o errexit
+
 WORKDIR=$(pwd)
 cd $WORKDIR
 
 REPODIR="/tmp/jellyfin-plugin-repo"
 version=$(echo -n $TAG | sed "s/v//g")
-checksum=$(cat $PKG_NAME | md5sum | cut -d' ' -f1)
 changetime=$(date +%Y-%m-%dT%H:%M:%SZ)
 changelog=$(git show -s --format=%s)
 targetAbi="10.7.0.0"
@@ -105,6 +106,7 @@ trigger_git_push() {
 }
 
 setup
+checksum=$(cat $PKG_NAME | md5sum | cut -d' ' -f1)
 change_manifest_file "manifest-cn.json" $mirror_cn
 change_manifest_file "manifest-us.json" $mirror_us
 trigger_git_push

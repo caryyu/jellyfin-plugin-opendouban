@@ -28,7 +28,7 @@ Move `Jellyfin.Plugin.OpenDouban.dll` to `<jellyfin_config>/plugins/Jellyfin.Plu
 version: "2"
 services:
   doubanos:
-    image: caryyu/douban-openapi-server:c5c8edb
+    image: caryyu/douban-openapi-server:0a661a5
     container_name: doubanos
     network_mode: "host"
     restart: "unless-stopped"
