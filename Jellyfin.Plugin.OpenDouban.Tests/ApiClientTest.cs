@@ -34,6 +34,7 @@ namespace Jellyfin.Plugin.OpenDouban.Tests
         public void TestGetBySid() {
             ApiSubject result = apiClient.GetBySid("1295038").Result;
             Assert.Equal("1295038", result.Sid);
+            Assert.NotEmpty(result.Celebrities);
         }
     }
 }

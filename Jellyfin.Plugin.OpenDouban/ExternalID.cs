@@ -3,7 +3,6 @@ using MediaBrowser.Controller.Entities.TV;
 using MediaBrowser.Controller.Providers;
 using MediaBrowser.Model.Entities;
 using MediaBrowser.Model.Providers;
-using Jellyfin.Plugin.OpenDouban.Service;
 
 namespace Jellyfin.Plugin.OpenDouban
 {
@@ -19,12 +18,7 @@ namespace Jellyfin.Plugin.OpenDouban
 
         public bool Supports(IHasProviderIds item)
         {
-            return item is Movie;
+            return item is Movie || item is Series;
         }
-
-        // public bool Supports(IHasProviderIds item)
-        // {
-        //     return item is Movie || item is Series;
-        // }
     }
 }

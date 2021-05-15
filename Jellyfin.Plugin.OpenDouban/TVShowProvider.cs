@@ -73,12 +73,14 @@ namespace Jellyfin.Plugin.OpenDouban
             result.QueriedById = true;
             result.HasMetadata = true;
 
-            // Load Persons & nice to have
-            List<ApiCelebrity> celebrities = await apiClient.GetCelebritiesBySid(sid);
-            celebrities.ForEach(c => result.AddPerson(new MediaBrowser.Controller.Entities.PersonInfo
+            if(x.Celebrities == null || !x.Celebrities.Any()) {
+                // Load Persons & nice to have
+                x.Celebrities = await apiClient.GetCelebritiesBySid(sid);
+            } 
+            x.Celebrities.ForEach(c => result.AddPerson(new MediaBrowser.Controller.Entities.PersonInfo
             {
                 Name = c.Name,
-                Type = c.Role,
+                Type = c.Role.Equals("导演") ? PersonType.Director : c.Role.Equals("演员") ? PersonType.Actor : c.Role,
                 Role = c.Role,
                 ImageUrl = c.Img,
                 ProviderIds = new Dictionary<string, string> { { OpenDoubanPlugin.ProviderID, c.Id } },
@@ -172,12 +174,14 @@ namespace Jellyfin.Plugin.OpenDouban
             result.QueriedById = true;
             result.HasMetadata = true;
 
-            // Load Persons & nice to have
-            List<ApiCelebrity> celebrities = await apiClient.GetCelebritiesBySid(sid);
-            celebrities.ForEach(c => result.AddPerson(new MediaBrowser.Controller.Entities.PersonInfo
+            if(x.Celebrities == null || !x.Celebrities.Any()) {
+                // Load Persons & nice to have
+                x.Celebrities = await apiClient.GetCelebritiesBySid(sid);
+            } 
+            x.Celebrities.ForEach(c => result.AddPerson(new MediaBrowser.Controller.Entities.PersonInfo
             {
                 Name = c.Name,
-                Type = c.Role,
+                Type = c.Role.Equals("导演") ? PersonType.Director : c.Role.Equals("演员") ? PersonType.Actor : c.Role,
                 Role = c.Role,
                 ImageUrl = c.Img,
                 ProviderIds = new Dictionary<string, string> { { OpenDoubanPlugin.ProviderID, c.Id } },

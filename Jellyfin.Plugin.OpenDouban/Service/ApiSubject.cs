@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace Jellyfin.Plugin.OpenDouban.Service
 {
     public class ApiSubject
@@ -58,5 +60,7 @@ namespace Jellyfin.Plugin.OpenDouban.Service
         // "imdb": "tt0241527"
         public string Imdb { get; set; }
         public string Intro { get; set; }
+
+        public List<ApiCelebrity> Celebrities { get; set;}
     }
 }
