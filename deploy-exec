@@ -4,7 +4,7 @@ cd $WORKDIR
 
 REPODIR="/tmp/jellyfin-plugin-repo"
 version=$(echo -n $TAG | sed "s/v//g")
-checksum=$(cat $PKG_NAME | md5deep)
+checksum=$(cat $PKG_NAME | md5sum | cut -d' ' -f1)
 changetime=$(date +%Y-%m-%dT%H:%M:%SZ)
 changelog=$(git show -s --format=%s)
 targetAbi="10.7.0.0"
