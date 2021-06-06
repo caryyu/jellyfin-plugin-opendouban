@@ -70,13 +70,15 @@ namespace Jellyfin.Plugin.OpenDouban
             };
 
             info.SetProviderId(OpenDoubanPlugin.ProviderID, x.Sid);
+            if(!string.IsNullOrEmpty(x.Imdb)) {
+                info.SetProviderId(MetadataProvider.Imdb, x.Imdb);
+            }
+            
             result.QueriedById = true;
             result.HasMetadata = true;
+            
+            x.Celebrities = await apiClient.GetCelebritiesBySid(sid);
 
-            if(x.Celebrities == null || !x.Celebrities.Any()) {
-                // Load Persons & nice to have
-                x.Celebrities = await apiClient.GetCelebritiesBySid(sid);
-            } 
             x.Celebrities.ForEach(c => result.AddPerson(new MediaBrowser.Controller.Entities.PersonInfo
             {
                 Name = c.Name,
