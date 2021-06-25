@@ -44,7 +44,9 @@ namespace Jellyfin.Plugin.OpenDouban
             else if (!string.IsNullOrEmpty(info.Name))
             {
                 string pattern = OpenDoubanPlugin.Instance?.Configuration.Pattern;
-                string name = Regex.Replace(info.Name, pattern, "");
+                string name = Regex.Replace(info.Name, pattern, " ");
+                logger.LogInformation($"[Open DOUBAN] GetMetadata of [name]: \"{name}\"");
+
                 List<ApiSubject> res = await apiClient.PartialSearch(name);
                 
                 // Getting 1st item from the result

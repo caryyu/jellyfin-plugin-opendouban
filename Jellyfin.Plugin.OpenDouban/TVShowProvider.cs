@@ -44,7 +44,7 @@ namespace Jellyfin.Plugin.OpenDouban
             else if (!string.IsNullOrEmpty(info.Name))
             {
                 string pattern = OpenDoubanPlugin.Instance?.Configuration.Pattern;
-                string name = Regex.Replace(info.Name, pattern, "");
+                string name = Regex.Replace(info.Name, pattern, " ");
                 logger.LogInformation($"[Open DOUBAN] Series GetMetadata of [name]: \"{name}\"");
 
                 List<ApiSubject> res = await apiClient.PartialSearch(name);
@@ -153,7 +153,7 @@ namespace Jellyfin.Plugin.OpenDouban
             else if (!string.IsNullOrEmpty(info.Name))
             {
                 string pattern = OpenDoubanPlugin.Instance?.Configuration.Pattern;
-                string name = Regex.Replace(info.Name, pattern, "");
+                string name = Regex.Replace(info.Name, pattern, " ");
                 logger.LogInformation($"[Open DOUBAN] Season GetMetadata of [name]: \"{name}\"");
 
                 List<ApiSubject> res = await apiClient.PartialSearch(name);
