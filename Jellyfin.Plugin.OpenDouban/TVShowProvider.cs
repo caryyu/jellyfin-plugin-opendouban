@@ -10,6 +10,7 @@ using MediaBrowser.Model.Providers;
 using MediaBrowser.Model.Serialization;
 using Microsoft.Extensions.Logging;
 using Jellyfin.Plugin.OpenDouban.Service;
+using System.Text.RegularExpressions;
 
 namespace Jellyfin.Plugin.OpenDouban
 {
@@ -42,8 +43,14 @@ namespace Jellyfin.Plugin.OpenDouban
             }
             else if (!string.IsNullOrEmpty(info.Name))
             {
-                List<ApiSubject> res = await apiClient.PartialSearch(info.Name);
-                var has = res.Where<ApiSubject>(x => x.Name.Equals(info.Name) || x.OriginalName.Equals(info.Name));
+                string pattern = OpenDoubanPlugin.Instance?.Configuration.Pattern;
+                string name = Regex.Replace(info.Name, pattern, " ");
+                logger.LogInformation($"[Open DOUBAN] Series GetMetadata of [name]: \"{name}\"");
+
+                List<ApiSubject> res = await apiClient.PartialSearch(name);
+                
+                // Getting 1st item from the result
+                var has = res;
                 if (has.Any())
                 {
                     sid = has.FirstOrDefault().Sid;
@@ -145,8 +152,14 @@ namespace Jellyfin.Plugin.OpenDouban
             }
             else if (!string.IsNullOrEmpty(info.Name))
             {
-                List<ApiSubject> res = await apiClient.PartialSearch(info.Name);
-                var has = res.Where<ApiSubject>(x => x.Name.Equals(info.Name) || x.OriginalName.Equals(info.Name));
+                string pattern = OpenDoubanPlugin.Instance?.Configuration.Pattern;
+                string name = Regex.Replace(info.Name, pattern, " ");
+                logger.LogInformation($"[Open DOUBAN] Season GetMetadata of [name]: \"{name}\"");
+
+                List<ApiSubject> res = await apiClient.PartialSearch(name);
+                
+                // Getting 1st item from the result
+                var has = res;
                 if (has.Any())
                 {
                     sid = has.FirstOrDefault().Sid;

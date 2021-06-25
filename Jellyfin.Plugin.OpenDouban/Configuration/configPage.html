@@ -12,7 +12,12 @@
                     <div class="inputContainer">
                         <label class="inputeLabel inputLabelUnfocused" for="ApiBaseUri">Api</label>
                         <input id="ApiBaseUri" name="ApiBaseUri" type="text" is="emby-input" />
-                        <div class="fieldDescription">This is the API prefix url, for example: http://192.168.1.11:5000</div>
+                        <div class="fieldDescription">The API prefix URI, for example: http://192.168.1.11:5000</div>
+                    </div>
+                    <div class="inputContainer">
+                        <label class="inputeLabel inputLabelUnfocused" for="Pattern">Pattern</label>
+                        <input id="Pattern" name="Pattern" type="text" is="emby-input" />
+                        <div class="fieldDescription">A regular expression filtering media name, for example: The.Lion.King.2019.1080p.BluRay.x264-[YTS.LT].mp4 >> The Lion King 2019</div>
                     </div>
                     <div>
                         <button is="emby-button" type="submit" class="raised button-submit block emby-button">
@@ -31,6 +36,7 @@
                 Dashboard.showLoadingMsg();
                 ApiClient.getPluginConfiguration(DoubanProviderConfig.pluginUniqueId).then(function (config) {
                     $('#ApiBaseUri').val(config.ApiBaseUri).change();
+                    $('#Pattern').val(config.Pattern).change();
                     Dashboard.hideLoadingMsg();
                 });
             });
@@ -39,6 +45,7 @@
                 Dashboard.showLoadingMsg();
                 ApiClient.getPluginConfiguration(DoubanProviderConfig.pluginUniqueId).then(function (config) {
                     config.ApiBaseUri = $('#ApiBaseUri').val();
+                    config.Pattern = $('#Pattern').val();
                     ApiClient.updatePluginConfiguration(DoubanProviderConfig.pluginUniqueId, config).then(function (result) {
                         Dashboard.processPluginConfigurationUpdateResult(result);
                     });
