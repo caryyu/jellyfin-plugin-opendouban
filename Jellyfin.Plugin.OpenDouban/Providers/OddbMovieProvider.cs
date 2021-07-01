@@ -136,7 +136,7 @@ namespace Jellyfin.Plugin.OpenDouban.Providers
                 Type = c.Role.Equals("导演") ? PersonType.Director : c.Role.Equals("演员") ? PersonType.Actor : c.Role,
                 Role = c.Role,
                 ImageUrl = c.Img,
-                ProviderIds = new Dictionary<string, string> { { OpenDoubanPlugin.ProviderID, c.Id } },
+                ProviderIds = new Dictionary<string, string> { { OddbPlugin.ProviderId, c.Id } },
             }));
 
             return result;

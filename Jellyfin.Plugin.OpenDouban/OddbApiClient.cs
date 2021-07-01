@@ -1,5 +1,8 @@
 using System.Collections.Generic;
+using System.IO;
 using System.Net.Http;
+using MediaBrowser.Model.Serialization;
+using System.Threading.Tasks;
 
 namespace Jellyfin.Plugin.OpenDouban
 {
