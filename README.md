@@ -55,3 +55,6 @@ docker run --rm -v $(pwd):/app -e SSH_PRIVKEY_GITHUB=$SSH_PRIVKEY_GITHUB -e SSH_
 
 > ubuntu should have `git/jq/md5deep/zip` installed
 
+
+<a href="https://www.buymeacoffee.com/caryyu" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/yellow_img.png" alt="Buy Me A Coffee" style="height: auto !important;width: auto !important;" ></a>
+
