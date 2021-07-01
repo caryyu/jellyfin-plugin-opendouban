@@ -1,7 +1,10 @@
+using System.Collections.Generic;
+using System.Net.Http;
+
 namespace Jellyfin.Plugin.OpenDouban
 {
     /// <summary>
-    /// Oddb api client.
+    /// OddbApiClient.
     /// </summary>
     public sealed class OddbApiClient
     {

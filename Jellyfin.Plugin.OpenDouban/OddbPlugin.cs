@@ -21,14 +21,14 @@ namespace Jellyfin.Plugin.OpenDouban
         /// <summary>
         /// Gets the provider id.
         /// </summary>
-        public static string ProviderID = "OpenDoubanID";
+        public static string ProviderId = "OpenDoubanID";
 
         /// <summary>
         /// Initializes a new instance of the <see cref="OddbPlugin"/> class.
         /// </summary>
         /// <param name="applicationPaths">Instance of the <see cref="IApplicationPaths"/> interface.</param>
         /// <param name="xmlSerializer">Instance of the <see cref="IXmlSerializer"/> interface.</param>
-        public OpenDoubanPlugin(IApplicationPaths applicationPaths, IXmlSerializer xmlSerializer) 
+        public OddbPlugin(IApplicationPaths applicationPaths, IXmlSerializer xmlSerializer) 
             : base(applicationPaths, xmlSerializer)
         {
             Instance = this;
@@ -37,7 +37,7 @@ namespace Jellyfin.Plugin.OpenDouban
         /// <summary>
         /// Gets current plugin instance.
         /// </summary>
-        public static OpenDoubanPlugin Instance { get; private set; }
+        public static OddbPlugin Instance { get; private set; }
 
         /// <inheritdoc />
         public override string Name => "OpenDouban";

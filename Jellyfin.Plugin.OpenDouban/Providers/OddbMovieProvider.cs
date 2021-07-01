@@ -7,11 +7,10 @@ using MediaBrowser.Controller.Entities.Movies;
 using MediaBrowser.Controller.Providers;
 using MediaBrowser.Model.Entities;
 using MediaBrowser.Model.Providers;
-using MediaBrowser.Model.Serialization;
 using Microsoft.Extensions.Logging;
 using System.Text.RegularExpressions;
 
-namespace Jellyfin.Plugin.OpenDouban
+namespace Jellyfin.Plugin.OpenDouban.Providers
 {
     /// <summary>
     /// OddbMovieProvider.
@@ -28,7 +27,7 @@ namespace Jellyfin.Plugin.OpenDouban
         /// <param name="httpClientFactory">Instance of the <see cref="IHttpClientFactory"/> interface.</param>
         /// <param name="logger">Instance of the <see cref="ILogger{OddbMovieProvider}"/> interface.</param>
         /// <param name="oddbApiClient">Instance of <see cref="OddbApiClient"/>.</param>
-        public MovieProvider(IHttpClientFactory httpClientFactory, ILogger<OddbMovieProvider> logger, OddbApiClient oddbApiClient)
+        public OddbMovieProvider(IHttpClientFactory httpClientFactory, ILogger<OddbMovieProvider> logger, OddbApiClient oddbApiClient)
         {
             _httpClientFactory = httpClientFactory;
             _logger = logger;
@@ -43,7 +42,7 @@ namespace Jellyfin.Plugin.OpenDouban
         {
             List<ApiSubject> list = new List<ApiSubject>();
 
-            string sid = info.GetProviderId(OpenDoubanPlugin.ProviderID);
+            string sid = info.GetProviderId(OddbPlugin.ProviderId);
             if (!string.IsNullOrEmpty(sid))
             {
                 _logger.LogInformation($"[Open DOUBAN] GetSearchResults of [sid]: \"{sid}\"");
@@ -67,7 +66,7 @@ namespace Jellyfin.Plugin.OpenDouban
                 // int year = 0; int.TryParse(x?.Year, out year);
                 return new RemoteSearchResult
                 {
-                    ProviderIds = new Dictionary<string, string> { { OpenDoubanPlugin.ProviderID, x.Sid } },
+                    ProviderIds = new Dictionary<string, string> { { OddbPlugin.ProviderId, x.Sid } },
                     ImageUrl = x?.Img,
                     ProductionYear = x?.Year,
                     Name = x?.Name
@@ -79,9 +78,8 @@ namespace Jellyfin.Plugin.OpenDouban
         public async Task<MetadataResult<Movie>> GetMetadata(MovieInfo info, CancellationToken cancellationToken)
         {
             ApiSubject subject = null;
-            
 
-            string sid = info.GetProviderId(OpenDoubanPlugin.ProviderID);
+            string sid = info.GetProviderId(OddbPlugin.ProviderId);
             if (!string.IsNullOrEmpty(sid))
             {
                 _logger.LogInformation($"[Open DOUBAN] GetMetadata of [sid]: \"{sid}\"");
@@ -89,7 +87,7 @@ namespace Jellyfin.Plugin.OpenDouban
             }
             else if (!string.IsNullOrEmpty(info.Name))
             {
-                string pattern = OpenDoubanPlugin.Instance?.Configuration.Pattern;
+                string pattern = OddbPlugin.Instance?.Configuration.Pattern;
                 string name = Regex.Replace(info.Name, pattern, " ");
                 _logger.LogInformation($"[Open DOUBAN] GetMetadata of [name]: \"{name}\"");
 
@@ -111,7 +109,7 @@ namespace Jellyfin.Plugin.OpenDouban
 
             result.Item = new Movie
             {
-                ProviderIds = new Dictionary<string, string> { { OpenDoubanPlugin.ProviderID, x.Sid } },
+                ProviderIds = new Dictionary<string, string> { { OddbPlugin.ProviderId, x.Sid } },
                 Name = x?.Name,
                 OriginalTitle = x?.Subname,
                 CommunityRating = x?.Rating,
@@ -119,10 +117,10 @@ namespace Jellyfin.Plugin.OpenDouban
                 ProductionYear = x?.Year,
                 HomePageUrl = "https://www.douban.com",
                 // ProductionLocations = [x?.Country],
-                // PremiereDate = null,   
+                // PremiereDate = null,
             };
 
-            info.SetProviderId(OpenDoubanPlugin.ProviderID, x.Sid);
+            info.SetProviderId(OddbPlugin.ProviderId, x.Sid);
             if(!string.IsNullOrEmpty(x.Imdb)) {
                 info.SetProviderId(MetadataProvider.Imdb, x.Imdb);
             }
