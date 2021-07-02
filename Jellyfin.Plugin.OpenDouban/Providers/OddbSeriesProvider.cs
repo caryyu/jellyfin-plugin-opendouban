@@ -36,6 +36,7 @@ namespace Jellyfin.Plugin.OpenDouban.Providers
 
         /// <inheritdoc />
         public string Name => OddbPlugin.ProviderName;
+
         /// <summary>
         /// Pattern for media name filtering
         /// </summary>
