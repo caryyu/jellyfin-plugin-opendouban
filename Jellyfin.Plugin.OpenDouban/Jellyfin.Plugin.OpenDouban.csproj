@@ -5,7 +5,7 @@
     <RootNamespace>Jellyfin.Plugin.OpenDouban</RootNamespace>
 	  <AssemblyVersion>10.0.0.0</AssemblyVersion>
     <FileVersion>10.0.0.0</FileVersion>
-    <VersionPrefix>1.0.5</VersionPrefix>
+    <VersionPrefix>1.0.6</VersionPrefix>
   </PropertyGroup>
 
   <ItemGroup>
@@ -15,8 +15,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="Configuration\configPage.html" />
-    <EmbeddedResource Include="Configuration\configPage.html" />
+    <None Remove="Configuration\config.html" />
+    <EmbeddedResource Include="Configuration\config.html" />
   </ItemGroup>
 
 </Project>

@@ -11,48 +11,58 @@ using MediaBrowser.Controller.Entities.TV;
 using MediaBrowser.Controller.Providers;
 using MediaBrowser.Model.Entities;
 using MediaBrowser.Model.Providers;
-using MediaBrowser.Model.Serialization;
-using Jellyfin.Plugin.OpenDouban.Service;
 using Microsoft.Extensions.Logging;
 
-namespace Jellyfin.Plugin.OpenDouban
+namespace Jellyfin.Plugin.OpenDouban.Providers
 {
-    public class ImageProvider : IRemoteImageProvider, IHasOrder
+    /// <summary>
+    /// OddbImageProvider.
+    /// </summary>
+    public class OddbImageProvider : IRemoteImageProvider
     {
-        public string Name => "Open Douban Image Provider";
-        public int Order => 3;
-        private IHttpClientFactory httpClientFactory;
-        private IJsonSerializer jsonSerializer;
-        private ILogger logger;
-        private ApiClient apiClient;
+        private ILogger<OddbImageProvider> _logger;
+        private IHttpClientFactory _httpClientFactory;
+        private OddbApiClient _oddbApiClient;
 
-        public ImageProvider(IHttpClientFactory httpClientFactory, IJsonSerializer jsonSerializer, ILogger<ImageProvider> logger)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="OddbImageProvider"/> class.
+        /// </summary>
+        /// <param name="httpClientFactory">Instance of the <see cref="IHttpClientFactory"/> interface.</param>
+        /// <param name="logger">Instance of the <see cref="ILogger{OddbImageProvider}"/> interface.</param>
+        /// <param name="oddbApiClient">Instance of <see cref="OddbApiClient"/>.</param>
+        public OddbImageProvider(IHttpClientFactory httpClientFactory, ILogger<OddbImageProvider> logger, OddbApiClient oddbApiClient)
         {
-            this.httpClientFactory = httpClientFactory;
-            this.jsonSerializer = jsonSerializer;
-            this.logger = logger;
-            this.apiClient = new ApiClient(httpClientFactory, jsonSerializer);
+            _httpClientFactory = httpClientFactory;
+            _logger = logger;
+            _oddbApiClient = oddbApiClient;
         }
 
-        public async Task<HttpResponseMessage> GetImageResponse(string url, CancellationToken cancellationToken)
+        /// <inheritdoc />
+        public string Name => OddbPlugin.ProviderName;
+
+        /// <inheritdoc />
+        public bool Supports(BaseItem item) => item is Movie || item is Series;
+
+        /// <inheritdoc />
+        public IEnumerable<ImageType> GetSupportedImages(BaseItem item) => new List<ImageType>
         {
-            logger.LogInformation("[DOUBAN] GetImageResponse url: {0}", url);
-            HttpResponseMessage response = await httpClientFactory.CreateClient().GetAsync(url).ConfigureAwait(false);
-            response.EnsureSuccessStatusCode();
-            return response;
-        }
+            ImageType.Primary,
+            ImageType.Backdrop
+        };
+
+        /// <inheritdoc />
         public async Task<IEnumerable<RemoteImageInfo>> GetImages(BaseItem item, CancellationToken cancellationToken)
         {
-            logger.LogInformation($"[DOUBAN] GetImages for item: {item.Name}");
+            _logger.LogInformation($"[DOUBAN] GetImages for item: {item.Name}");
 
-            if (!item.HasProviderId(OpenDoubanPlugin.ProviderID))
+            if (!item.HasProviderId(OddbPlugin.ProviderId))
             {
-                logger.LogWarning($"[DOUBAN] Got images failed because the sid of \"{item.Name}\" is empty!");
+                _logger.LogWarning($"[DOUBAN] Got images failed because the sid of \"{item.Name}\" is empty!");
                 return new List<RemoteImageInfo>();
             }
 
-            string sid = item.GetProviderId(OpenDoubanPlugin.ProviderID);
-            var primary = await apiClient.GetBySid(sid);
+            string sid = item.GetProviderId(OddbPlugin.ProviderId);
+            var primary = await _oddbApiClient.GetBySid(sid);
             var dropback = await GetBackdrop(sid, cancellationToken);
 
             var res = new List<RemoteImageInfo> {
@@ -67,18 +77,13 @@ namespace Jellyfin.Plugin.OpenDouban
             return res;
         }
 
-        public bool Supports(BaseItem item)
+        /// <inheritdoc />
+        public async Task<HttpResponseMessage> GetImageResponse(string url, CancellationToken cancellationToken)
         {
-            return item is Movie || item is Series;
-        }
-
-        public IEnumerable<ImageType> GetSupportedImages(BaseItem item)
-        {
-            return new List<ImageType>
-            {
-                ImageType.Primary,
-                ImageType.Backdrop
-            };
+            _logger.LogInformation("[DOUBAN] GetImageResponse url: {0}", url);
+            HttpResponseMessage response = await _httpClientFactory.CreateClient().GetAsync(url).ConfigureAwait(false);
+            response.EnsureSuccessStatusCode();
+            return response;
         }
 
         /// <summary>
@@ -88,7 +93,7 @@ namespace Jellyfin.Plugin.OpenDouban
         {
             var url = $"https://movie.douban.com/subject/{sid}/photos?type=W&start=0&sortby=size&size=a&subtype=a";
 
-            var response = await httpClientFactory.CreateClient().GetAsync(url, cancellationToken);
+            var response = await _httpClientFactory.CreateClient().GetAsync(url, cancellationToken);
             var stream = await response.Content.ReadAsStreamAsync(cancellationToken);
             string content = new StreamReader(stream).ReadToEnd();
 
@@ -101,7 +106,7 @@ namespace Jellyfin.Plugin.OpenDouban
                 string data_id = match.Groups[1].Value;
                 string width = match.Groups[2].Value;
                 string height = match.Groups[3].Value;
-                logger.LogInformation("Find backdrop id {0}, size {1}x{2}", data_id, width, height);
+                _logger.LogInformation("Find backdrop id {0}, size {1}x{2}", data_id, width, height);
 
                 if (float.Parse(width) > float.Parse(height) * 1.3)
                 {

@@ -1,23 +1,20 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using MediaBrowser.Controller.Providers;
-using MediaBrowser.Model.Entities;
-using MediaBrowser.Model.Providers;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 using Xunit.Abstractions;
+using Jellyfin.Plugin.OpenDouban.Providers;
 
 namespace Jellyfin.Plugin.OpenDouban.Tests
 {
-    public class PersonProviderTest
+    public class OddbPersonProviderTest
     {
-        private readonly PersonProvider _provider;
-        public PersonProviderTest(ITestOutputHelper output)
+        private readonly OddbPersonProvider _provider;
+        public OddbPersonProviderTest(ITestOutputHelper output)
         {
-            var serviceProvider = ServiceUtils.BuildServiceProvider<PersonProvider>(output);
-            _provider = serviceProvider.GetService<PersonProvider>();
+            var serviceProvider = OddbServiceUtils.BuildServiceProvider<OddbPersonProvider>(output);
+            _provider = serviceProvider.GetService<OddbPersonProvider>();
         }
 
         [Fact]
@@ -25,7 +22,7 @@ namespace Jellyfin.Plugin.OpenDouban.Tests
         {
             PersonLookupInfo info = new PersonLookupInfo
             {
-                ProviderIds = new Dictionary<string, string>{{OpenDoubanPlugin.ProviderID, "1032025"}}
+                ProviderIds = new Dictionary<string, string>{{OddbPlugin.ProviderId, "1032025"}}
             };
 
             var meta = _provider.GetMetadata(info, CancellationToken.None).Result;

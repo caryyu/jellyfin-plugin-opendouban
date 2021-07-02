@@ -1,25 +1,24 @@
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using MediaBrowser.Controller.Providers;
 using MediaBrowser.Model.Entities;
-using MediaBrowser.Model.Providers;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 using Xunit.Abstractions;
 using System.Text.RegularExpressions;
 using Jellyfin.Plugin.OpenDouban.Configuration;
+using Jellyfin.Plugin.OpenDouban.Providers;
 
 namespace Jellyfin.Plugin.OpenDouban.Tests
 {
-    public class MovieProviderTest
+    public class OddbMovieProviderTest
     {
-        private readonly MovieProvider _provider;
-        public MovieProviderTest(ITestOutputHelper output)
+        private readonly OddbMovieProvider _provider;
+        public OddbMovieProviderTest(ITestOutputHelper output)
         {
-            var serviceProvider = ServiceUtils.BuildServiceProvider<MovieProvider>(output);
-            _provider = serviceProvider.GetService<MovieProvider>();
+            var serviceProvider = OddbServiceUtils.BuildServiceProvider<OddbMovieProvider>(output);
+            _provider = serviceProvider.GetService<OddbMovieProvider>();
+            _provider.Pattern = OddbServiceUtils.Pattern;
         }
 
         [Fact]
@@ -34,16 +33,16 @@ namespace Jellyfin.Plugin.OpenDouban.Tests
             var result = _provider.GetSearchResults(info, CancellationToken.None).Result;
             Assert.NotEmpty(result);
             Assert.True(result.Count() > 1);
-            string doubanId = result.FirstOrDefault()?.GetProviderId(OpenDoubanPlugin.ProviderID);
+            string doubanId = result.FirstOrDefault()?.GetProviderId(OddbPlugin.ProviderId);
             int? year = result.FirstOrDefault()?.ProductionYear;
             Assert.Equal("1851857", doubanId);
             Assert.Equal(2008, year);
 
             // Test 2: Already has provider Id.
-            info.SetProviderId(OpenDoubanPlugin.ProviderID, "1851857");
+            info.SetProviderId(OddbPlugin.ProviderId, "1851857");
             result = _provider.GetSearchResults(info, CancellationToken.None).Result;
             Assert.True(result.Count() == 1);
-            doubanId = result.FirstOrDefault()?.GetProviderId(OpenDoubanPlugin.ProviderID);
+            doubanId = result.FirstOrDefault()?.GetProviderId(OddbPlugin.ProviderId);
             year = result.FirstOrDefault()?.ProductionYear;
             Assert.Equal("1851857", doubanId);
             Assert.Equal(2008, year);
@@ -60,7 +59,7 @@ namespace Jellyfin.Plugin.OpenDouban.Tests
             var meta = _provider.GetMetadata(info, CancellationToken.None).Result;
             Assert.True(meta.HasMetadata);
             Assert.Equal("源代码", meta.Item.Name);
-            Assert.Equal("3075287", meta.Item.GetProviderId(OpenDoubanPlugin.ProviderID));
+            Assert.Equal("3075287", meta.Item.GetProviderId(OddbPlugin.ProviderId));
             // Assert.Equal(DateTime.Parse("2011-08-30"), meta.Item.PremiereDate);
 
             // Test 2: Already has provider Id.
@@ -68,18 +67,10 @@ namespace Jellyfin.Plugin.OpenDouban.Tests
             {
                 Name = "Source Code"
             };
-            info.SetProviderId(OpenDoubanPlugin.ProviderID, "1851857");
+            info.SetProviderId(OddbPlugin.ProviderId, "1851857");
             meta = _provider.GetMetadata(info, CancellationToken.None).Result;
             Assert.True(meta.HasMetadata);
             Assert.Equal("蝙蝠侠：黑暗骑士", meta.Item.Name);
-
-            // Test 2: Not movie type.
-            info = new MovieInfo()
-            {
-                Name = "大秦帝国"
-            };
-            meta = _provider.GetMetadata(info, CancellationToken.None).Result;
-            Assert.False(meta.HasMetadata);
         }
 
         [Fact]
