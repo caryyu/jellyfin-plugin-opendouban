@@ -11,7 +11,7 @@ namespace Jellyfin.Plugin.OpenDouban.Tests
 
         public OddbApiClientTest(ITestOutputHelper output)
         {
-            var serviceProvider = ServiceUtils.BuildServiceProvider<OddbApiClient>(output);
+            var serviceProvider = OddbServiceUtils.BuildServiceProvider<OddbApiClient>(output);
             _oddbApiClient = serviceProvider.GetService<OddbApiClient>();
         }
 

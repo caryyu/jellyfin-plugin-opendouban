@@ -9,24 +9,25 @@ using Xunit.Abstractions;
 
 namespace Jellyfin.Plugin.OpenDouban.Tests
 {
-    class ServiceUtils
+    class OddbServiceUtils
     {
         public static ServiceProvider BuildServiceProvider<T>(ITestOutputHelper output) where T : class
-        {
+        {   
             var services = new ServiceCollection()
                 .AddHttpClient()
                 .AddLogging(builder => builder.AddXUnit(output).SetMinimumLevel(LogLevel.Debug))
                 .AddSingleton<IJsonSerializer, MockJsonSerializer>()
+                .AddSingleton<OddbApiClient>()
                 .AddSingleton<T>();
 
             var serviceProvider = services.BuildServiceProvider();
+            var oddbApiClient = serviceProvider.GetService<OddbApiClient>();
+            oddbApiClient.ApiBaseUri = "http://localhost:5000";
 
-            // Used For FrodoAndroidClient which can not use typed ILogger.
-            var logger = serviceProvider.GetService<ILogger<T>>();
-            services.AddSingleton<ILogger>(logger);
-
-            return services.BuildServiceProvider();
+            return serviceProvider;
         }
+
+        public static string Pattern => @"(S\d{2}|E\d{2}|HDR|\d{3,4}p|WEBRip|WEB|YIFY|BrRip|BluRay|H265|H264|x264|AAC\.\d\.\d|AAC|HDTV|mkv|mp4)|(\[.*\])|(\-\w+|\{.*\}|【.*】|\(.*\)|\d+MB)|(\.|\-)";
     }
 
     class MockJsonSerializer : IJsonSerializer

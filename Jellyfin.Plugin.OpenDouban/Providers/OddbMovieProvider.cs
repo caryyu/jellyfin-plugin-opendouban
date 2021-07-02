@@ -37,6 +37,26 @@ namespace Jellyfin.Plugin.OpenDouban.Providers
         /// <inheritdoc />
         public string Name => OddbPlugin.ProviderName;
 
+        /// <summary>
+        /// Pattern for media name filtering
+        /// </summary>
+        private string _pattern;
+        public string Pattern
+        {
+            get
+            {
+                if(string.IsNullOrEmpty(_pattern)) 
+                {
+                    return OddbPlugin.Instance?.Configuration.Pattern;
+                }
+                return _pattern;
+            }
+            set
+            {
+                _pattern = value;
+            }
+        }
+
         /// <inheritdoc />
         public async Task<IEnumerable<RemoteSearchResult>> GetSearchResults(MovieInfo info, CancellationToken cancellationToken)
         {
@@ -87,8 +107,7 @@ namespace Jellyfin.Plugin.OpenDouban.Providers
             }
             else if (!string.IsNullOrEmpty(info.Name))
             {
-                string pattern = OddbPlugin.Instance?.Configuration.Pattern;
-                string name = Regex.Replace(info.Name, pattern, " ");
+                string name = Regex.Replace(info.Name, Pattern, " ");
                 _logger.LogInformation($"[Open DOUBAN] GetMetadata of [name]: \"{name}\"");
 
                 List<ApiSubject> res = await _oddbApiClient.PartialSearch(name);

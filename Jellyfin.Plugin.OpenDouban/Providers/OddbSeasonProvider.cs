@@ -9,7 +9,6 @@ using MediaBrowser.Model.Entities;
 using MediaBrowser.Model.Providers;
 using Microsoft.Extensions.Logging;
 using System.Text.RegularExpressions;
-using Jellyfin.Plugin.OpenDouban;
 
 namespace Jellyfin.Plugin.OpenDouban.Providers
 {
@@ -37,6 +36,25 @@ namespace Jellyfin.Plugin.OpenDouban.Providers
 
         /// <inheritdoc />
         public string Name => OddbPlugin.ProviderName;
+        /// <summary>
+        /// Pattern for media name filtering
+        /// </summary>
+        private string _pattern;
+        public string Pattern
+        {
+            get
+            {
+                if(string.IsNullOrEmpty(_pattern)) 
+                {
+                    return OddbPlugin.Instance?.Configuration.Pattern;
+                }
+                return _pattern;
+            }
+            set
+            {
+                _pattern = value;
+            }
+        }
 
         /// <inheritdoc />
         public async Task<MetadataResult<Season>> GetMetadata(SeasonInfo info, CancellationToken cancellationToken)
@@ -55,8 +73,7 @@ namespace Jellyfin.Plugin.OpenDouban.Providers
             }
             else if (!string.IsNullOrEmpty(info.Name))
             {
-                string pattern = OddbPlugin.Instance?.Configuration.Pattern;
-                string name = Regex.Replace(info.Name, pattern, " ");
+                string name = Regex.Replace(info.Name, Pattern, " ");
                 _logger.LogInformation($"[Open DOUBAN] Season GetMetadata of [name]: \"{name}\"");
 
                 List<ApiSubject> res = await _oddbApiClient.PartialSearch(name);

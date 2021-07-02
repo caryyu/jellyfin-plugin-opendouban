@@ -25,7 +25,22 @@ namespace Jellyfin.Plugin.OpenDouban
             this.jsonSerializer = jsonSerializer;
         }
 
-        private string ApiBaseUri => OddbPlugin.Instance?.Configuration.ApiBaseUri;
+        /// <summary>
+        /// ApiBaseUri
+        /// </summary>
+        private string _apiBaseUri;
+        public string ApiBaseUri 
+        {
+            get 
+            {
+                if(string.IsNullOrEmpty(_apiBaseUri)) 
+                {
+                    return OddbPlugin.Instance?.Configuration.ApiBaseUri;
+                }
+                return _apiBaseUri;
+            }
+            set { _apiBaseUri = value;}
+        }
 
         public async Task<List<ApiSubject>> FullSearch(string keyword)
         {

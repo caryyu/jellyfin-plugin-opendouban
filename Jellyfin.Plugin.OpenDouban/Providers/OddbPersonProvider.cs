@@ -57,7 +57,7 @@ namespace Jellyfin.Plugin.OpenDouban.Providers
                     Name = c.Name,
                     HomePageUrl = c.Site,
                     Overview = c.Intro,
-                    PremiereDate = DateTime.ParseExact(c.Birthdate, "yyyy-MM-dd", System.Globalization.CultureInfo.CurrentCulture)
+                    PremiereDate = DateTime.ParseExact(c.Birthdate, "yyyy年MM月dd日", System.Globalization.CultureInfo.CurrentCulture)
                 };
 
                 p.SetProviderId(OddbPlugin.ProviderId, c.Id);
