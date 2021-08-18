@@ -102,6 +102,20 @@ namespace Jellyfin.Plugin.OpenDouban
             ApiCelebrity result = await jsonSerializer.DeserializeFromStreamAsync<ApiCelebrity>(content);
             return result;
         }
+
+        public async Task<List<ApiPhoto>> GetPhotoBySid(string sid)
+        {
+            string url = $"{ApiBaseUri}/photo/{sid}";
+
+            HttpResponseMessage response = await httpClientFactory.CreateClient().GetAsync(url).ConfigureAwait(false);
+            if(!response.IsSuccessStatusCode) 
+            {
+                return null;
+            }
+            Stream content = await response.Content.ReadAsStreamAsync();
+            List<ApiPhoto> result = await jsonSerializer.DeserializeFromStreamAsync<List<ApiPhoto>>(content);
+            return result;
+        }
     }
 
     public class ApiSubject
@@ -180,5 +194,16 @@ namespace Jellyfin.Plugin.OpenDouban
         public string Nickname {get;set;}
         public string Imdb {get;set;}
         public string Site {get;set;}
+    }
+
+    public class ApiPhoto
+    {
+      public string Id {get;set;}
+      public string Small {get;set;}
+      public string Medium { get; set; }
+      public string Large { get; set; }
+      public string Size { get; set; }
+      public int Width { get; set; }
+      public int Height { get; set; }
     }
 }

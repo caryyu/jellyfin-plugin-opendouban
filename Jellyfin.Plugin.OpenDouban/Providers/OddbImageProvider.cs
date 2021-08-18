@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
@@ -86,43 +87,22 @@ namespace Jellyfin.Plugin.OpenDouban.Providers
             return response;
         }
 
-        /// <summary>
-        /// This logic should be covered by the backend
-        /// </summary>
+        /// <inheritdoc />
         public async Task<IEnumerable<RemoteImageInfo>> GetBackdrop(string sid, CancellationToken cancellationToken)
         {
-            var url = $"https://movie.douban.com/subject/{sid}/photos?type=W&start=0&sortby=size&size=a&subtype=a";
-
-            var response = await _httpClientFactory.CreateClient().GetAsync(url, cancellationToken);
-            var stream = await response.Content.ReadAsStreamAsync(cancellationToken);
-            string content = new StreamReader(stream).ReadToEnd();
-
-            const String pattern = @"(?s)data-id=""(\d+)"".*?class=""prop"">\n\s*(\d+)x(\d+)";
-            Match match = Regex.Match(content, pattern);
-
+            _logger.LogInformation("[DOUBAN] GetBackdrop of sid: {0}", sid);
+            var photo = await _oddbApiClient.GetPhotoBySid(sid);
             var list = new List<RemoteImageInfo>();
-            while (match.Success)
+
+            return photo.Where(x => x.Width > x.Height * 1.3).Select(x => 
             {
-                string data_id = match.Groups[1].Value;
-                string width = match.Groups[2].Value;
-                string height = match.Groups[3].Value;
-                _logger.LogInformation("Find backdrop id {0}, size {1}x{2}", data_id, width, height);
-
-                if (float.Parse(width) > float.Parse(height) * 1.3)
+                return new RemoteImageInfo
                 {
-                    // Just chose the Backdrop which width is larger than height
-                    list.Add(new RemoteImageInfo
-                    {
-                        ProviderName = Name,
-                        Url = string.Format("https://img9.doubanio.com/view/photo/l/public/p{0}.webp", data_id),
-                        Type = ImageType.Backdrop,
-                    });
-                }
-
-                match = match.NextMatch();
-            }
-
-            return list;
+                    ProviderName = Name,
+                    Url = x.Large,
+                    Type = ImageType.Backdrop,
+                };
+            });
         }
     }
 }
