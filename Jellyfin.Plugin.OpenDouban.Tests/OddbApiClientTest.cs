@@ -35,5 +35,12 @@ namespace Jellyfin.Plugin.OpenDouban.Tests
             Assert.Equal("1295038", result.Sid);
             Assert.NotEmpty(result.Celebrities);
         }
+
+        [Fact]
+        public void TestGetPhotoBySid()
+        {
+            List<ApiPhoto> list = _oddbApiClient.GetPhotoBySid("30435124").Result;
+            Assert.NotEmpty(list);
+        }
     }
 }
