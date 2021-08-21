@@ -91,6 +91,8 @@ namespace Jellyfin.Plugin.OpenDouban.Providers
         /// <summary>
         /// Query for a background photo
         /// </summary>
+        /// <param name="sid">a subject/movie id</param>
+        /// <param name="cancellationToken">Instance of the <see cref="CancellationToken"/> interface.</param>
         public async Task<IEnumerable<RemoteImageInfo>> GetBackdrop(string sid, CancellationToken cancellationToken)
         {
             _logger.LogInformation("[DOUBAN] GetBackdrop of sid: {0}", sid);
