@@ -56,13 +56,14 @@ namespace Jellyfin.Plugin.OpenDouban.Providers
         {
             _logger.LogInformation($"[DOUBAN] GetImages for item: {item.Name}");
 
-            if (!item.HasProviderId(OddbPlugin.ProviderId))
+            string sid = item.GetProviderId(OddbPlugin.ProviderId);
+
+            if (string.IsNullOrEmpty(sid))
             {
                 _logger.LogWarning($"[DOUBAN] Got images failed because the sid of \"{item.Name}\" is empty!");
                 return new List<RemoteImageInfo>();
             }
 
-            string sid = item.GetProviderId(OddbPlugin.ProviderId);
             var primary = await _oddbApiClient.GetBySid(sid);
             var dropback = await GetBackdrop(sid, cancellationToken);
 
@@ -87,7 +88,11 @@ namespace Jellyfin.Plugin.OpenDouban.Providers
             return response;
         }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Query for a background photo
+        /// </summary>
+        /// <param name="sid">a subject/movie id</param>
+        /// <param name="cancellationToken">Instance of the <see cref="CancellationToken"/> interface.</param>
         public async Task<IEnumerable<RemoteImageInfo>> GetBackdrop(string sid, CancellationToken cancellationToken)
         {
             _logger.LogInformation("[DOUBAN] GetBackdrop of sid: {0}", sid);

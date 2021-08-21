@@ -5,7 +5,7 @@ This plugin is another implementation based on https://github.com/caryyu/douban-
 
 ## Install Plugin
 
-Only support `10.7.0` and above
+Only support `10.7.0-rc3` and above
 
 Automatically:
 
