@@ -99,6 +99,11 @@ namespace Jellyfin.Plugin.OpenDouban.Providers
             var photo = await _oddbApiClient.GetPhotoBySid(sid);
             var list = new List<RemoteImageInfo>();
 
+            if(photo == null) 
+            {
+                return list;
+            }
+
             return photo.Where(x => x.Width > x.Height * 1.3).Select(x => 
             {
                 return new RemoteImageInfo
