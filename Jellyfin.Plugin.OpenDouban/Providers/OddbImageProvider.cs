@@ -42,7 +42,7 @@ namespace Jellyfin.Plugin.OpenDouban.Providers
         public string Name => OddbPlugin.ProviderName;
 
         /// <inheritdoc />
-        public bool Supports(BaseItem item) => item is Movie || item is Series;
+        public bool Supports(BaseItem item) => item is Movie || item is Series || item is Season;
 
         /// <inheritdoc />
         public IEnumerable<ImageType> GetSupportedImages(BaseItem item) => new List<ImageType>
