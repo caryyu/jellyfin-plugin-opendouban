@@ -42,7 +42,7 @@ namespace Jellyfin.Plugin.OpenDouban.Providers
         public string Name => OddbPlugin.ProviderName;
 
         /// <inheritdoc />
-        public bool Supports(BaseItem item) => item is Movie || item is Series;
+        public bool Supports(BaseItem item) => item is Movie || item is Series || item is Season;
 
         /// <inheritdoc />
         public IEnumerable<ImageType> GetSupportedImages(BaseItem item) => new List<ImageType>
@@ -98,6 +98,11 @@ namespace Jellyfin.Plugin.OpenDouban.Providers
             _logger.LogInformation("[DOUBAN] GetBackdrop of sid: {0}", sid);
             var photo = await _oddbApiClient.GetPhotoBySid(sid);
             var list = new List<RemoteImageInfo>();
+
+            if(photo == null) 
+            {
+                return list;
+            }
 
             return photo.Where(x => x.Width > x.Height * 1.3).Select(x => 
             {

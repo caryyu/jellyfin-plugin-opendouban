@@ -135,6 +135,7 @@ namespace Jellyfin.Plugin.OpenDouban.Providers
                 Overview = x?.Intro,
                 ProductionYear = x?.Year,
                 HomePageUrl = "https://www.douban.com",
+                Genres = x?.Genre.Split("/").Select(x => x.Trim()).ToArray(),
                 // ProductionLocations = [x?.Country],
                 // PremiereDate = null,
             };
