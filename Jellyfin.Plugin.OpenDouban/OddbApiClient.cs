@@ -29,17 +29,17 @@ namespace Jellyfin.Plugin.OpenDouban
         /// ApiBaseUri
         /// </summary>
         private string _apiBaseUri;
-        public string ApiBaseUri 
+        public string ApiBaseUri
         {
-            get 
+            get
             {
-                if(string.IsNullOrEmpty(_apiBaseUri)) 
+                if (string.IsNullOrEmpty(_apiBaseUri))
                 {
                     return OddbPlugin.Instance?.Configuration.ApiBaseUri;
                 }
                 return _apiBaseUri;
             }
-            set { _apiBaseUri = value;}
+            set { _apiBaseUri = value; }
         }
 
         public async Task<List<ApiSubject>> FullSearch(string keyword)
@@ -80,7 +80,7 @@ namespace Jellyfin.Plugin.OpenDouban
             string url = $"{ApiBaseUri}/movies/{sid}/celebrities";
 
             HttpResponseMessage response = await httpClientFactory.CreateClient().GetAsync(url).ConfigureAwait(false);
-            if(!response.IsSuccessStatusCode) 
+            if (!response.IsSuccessStatusCode)
             {
                 return new List<ApiCelebrity>();
             }
@@ -94,7 +94,7 @@ namespace Jellyfin.Plugin.OpenDouban
             string url = $"{ApiBaseUri}/celebrities/{cid}";
 
             HttpResponseMessage response = await httpClientFactory.CreateClient().GetAsync(url).ConfigureAwait(false);
-            if(!response.IsSuccessStatusCode) 
+            if (!response.IsSuccessStatusCode)
             {
                 return null;
             }
@@ -108,7 +108,7 @@ namespace Jellyfin.Plugin.OpenDouban
             string url = $"{ApiBaseUri}/photo/{sid}";
 
             HttpResponseMessage response = await httpClientFactory.CreateClient().GetAsync(url).ConfigureAwait(false);
-            if(!response.IsSuccessStatusCode) 
+            if (!response.IsSuccessStatusCode)
             {
                 return null;
             }
@@ -177,33 +177,33 @@ namespace Jellyfin.Plugin.OpenDouban
         public string Imdb { get; set; }
         public string Intro { get; set; }
 
-        public List<ApiCelebrity> Celebrities { get; set;}
+        public List<ApiCelebrity> Celebrities { get; set; }
     }
 
     public class ApiCelebrity
     {
-        public string Id {get;set;}
-        public string Name {get;set;}
-        public string Img {get;set;}
-        public string Role {get;set;}
-        public string Intro {get;set;}
-        public string Gender {get;set;}
-        public string Constellation {get;set;}
-        public string Birthdate {get;set;}
-        public string Birthplace {get;set;}
-        public string Nickname {get;set;}
-        public string Imdb {get;set;}
-        public string Site {get;set;}
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public string Img { get; set; }
+        public string Role { get; set; }
+        public string Intro { get; set; }
+        public string Gender { get; set; }
+        public string Constellation { get; set; }
+        public string Birthdate { get; set; }
+        public string Birthplace { get; set; }
+        public string Nickname { get; set; }
+        public string Imdb { get; set; }
+        public string Site { get; set; }
     }
 
     public class ApiPhoto
     {
-      public string Id {get;set;}
-      public string Small {get;set;}
-      public string Medium { get; set; }
-      public string Large { get; set; }
-      public string Size { get; set; }
-      public int Width { get; set; }
-      public int Height { get; set; }
+        public string Id { get; set; }
+        public string Small { get; set; }
+        public string Medium { get; set; }
+        public string Large { get; set; }
+        public string Size { get; set; }
+        public int Width { get; set; }
+        public int Height { get; set; }
     }
 }

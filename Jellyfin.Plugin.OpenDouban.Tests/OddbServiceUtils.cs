@@ -12,7 +12,7 @@ namespace Jellyfin.Plugin.OpenDouban.Tests
     class OddbServiceUtils
     {
         public static ServiceProvider BuildServiceProvider<T>(ITestOutputHelper output) where T : class
-        {   
+        {
             var services = new ServiceCollection()
                 .AddHttpClient()
                 .AddLogging(builder => builder.AddXUnit(output).SetMinimumLevel(LogLevel.Debug))

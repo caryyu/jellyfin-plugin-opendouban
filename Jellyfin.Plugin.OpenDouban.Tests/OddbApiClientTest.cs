@@ -16,21 +16,22 @@ namespace Jellyfin.Plugin.OpenDouban.Tests
         }
 
         [Fact]
-        public void TestFullSearch() 
+        public void TestFullSearch()
         {
             List<ApiSubject> list = _oddbApiClient.FullSearch("Harry Potter").Result;
             Assert.NotEmpty(list);
         }
 
         [Fact]
-        public void TestPartialSearch() 
+        public void TestPartialSearch()
         {
             List<ApiSubject> list = _oddbApiClient.PartialSearch("Harry Potter").Result;
             Assert.NotEmpty(list);
         }
 
         [Fact]
-        public void TestGetBySid() {
+        public void TestGetBySid()
+        {
             ApiSubject result = _oddbApiClient.GetBySid("1295038").Result;
             Assert.Equal("1295038", result.Sid);
             Assert.NotEmpty(result.Celebrities);
