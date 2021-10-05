@@ -45,7 +45,7 @@ namespace Jellyfin.Plugin.OpenDouban.Providers
         {
             get
             {
-                if(string.IsNullOrEmpty(_pattern)) 
+                if (string.IsNullOrEmpty(_pattern))
                 {
                     return OddbPlugin.Instance?.Configuration.Pattern;
                 }
@@ -112,7 +112,7 @@ namespace Jellyfin.Plugin.OpenDouban.Providers
                 _logger.LogInformation($"[Open DOUBAN] Series GetMetadata of [name]: \"{name}\"");
 
                 List<ApiSubject> res = await _oddbApiClient.PartialSearch(name);
-                
+
                 // Getting 1st item from the result
                 var has = res;
                 if (has.Any())
@@ -142,13 +142,14 @@ namespace Jellyfin.Plugin.OpenDouban.Providers
             };
 
             info.SetProviderId(OddbPlugin.ProviderId, x.Sid);
-            if(!string.IsNullOrEmpty(x.Imdb)) {
+            if (!string.IsNullOrEmpty(x.Imdb))
+            {
                 info.SetProviderId(MetadataProvider.Imdb, x.Imdb);
             }
-            
+
             result.QueriedById = true;
             result.HasMetadata = true;
-            
+
             x.Celebrities = await _oddbApiClient.GetCelebritiesBySid(sid);
 
             x.Celebrities.ForEach(c => result.AddPerson(new MediaBrowser.Controller.Entities.PersonInfo

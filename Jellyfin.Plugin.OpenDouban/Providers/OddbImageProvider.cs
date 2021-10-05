@@ -68,7 +68,7 @@ namespace Jellyfin.Plugin.OpenDouban.Providers
             var dropback = await GetBackdrop(sid, cancellationToken);
 
             var res = new List<RemoteImageInfo> {
-                new RemoteImageInfo 
+                new RemoteImageInfo
                 {
                     ProviderName = primary.Name,
                     Url = primary.Img,
@@ -99,12 +99,12 @@ namespace Jellyfin.Plugin.OpenDouban.Providers
             var photo = await _oddbApiClient.GetPhotoBySid(sid);
             var list = new List<RemoteImageInfo>();
 
-            if(photo == null) 
+            if (photo == null)
             {
                 return list;
             }
 
-            return photo.Where(x => x.Width > x.Height * 1.3).Select(x => 
+            return photo.Where(x => x.Width > x.Height * 1.3).Select(x =>
             {
                 return new RemoteImageInfo
                 {

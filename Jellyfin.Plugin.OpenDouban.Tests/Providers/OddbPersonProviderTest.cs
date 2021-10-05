@@ -22,7 +22,7 @@ namespace Jellyfin.Plugin.OpenDouban.Tests
         {
             PersonLookupInfo info = new PersonLookupInfo
             {
-                ProviderIds = new Dictionary<string, string>{{OddbPlugin.ProviderId, "1032025"}}
+                ProviderIds = new Dictionary<string, string> { { OddbPlugin.ProviderId, "1032025" } }
             };
 
             var meta = _provider.GetMetadata(info, CancellationToken.None).Result;

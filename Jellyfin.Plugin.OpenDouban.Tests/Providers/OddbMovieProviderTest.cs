@@ -74,7 +74,8 @@ namespace Jellyfin.Plugin.OpenDouban.Tests
         }
 
         [Fact]
-        public void TestNameRegexFiltering() {
+        public void TestNameRegexFiltering()
+        {
             PluginConfiguration cfg = new PluginConfiguration();
 
             string[] names = {

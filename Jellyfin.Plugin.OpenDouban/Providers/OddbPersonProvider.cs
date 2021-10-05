@@ -50,8 +50,9 @@ namespace Jellyfin.Plugin.OpenDouban.Providers
             string cid = info.GetProviderId(OddbPlugin.ProviderId);
             _logger.LogInformation($"[Open DOUBAN] Person GetMetadata of [cid]: \"{cid}\"");
             ApiCelebrity c = await _oddbApiClient.GetCelebrityByCid(cid);
-            
-            if(c != null) {
+
+            if (c != null)
+            {
                 Person p = new Person
                 {
                     Name = c.Name,
@@ -64,7 +65,7 @@ namespace Jellyfin.Plugin.OpenDouban.Providers
 
                 if (!string.IsNullOrWhiteSpace(c.Birthplace))
                 {
-                   p.ProductionLocations = new[] { c.Birthplace };
+                    p.ProductionLocations = new[] { c.Birthplace };
                 }
 
                 if (!string.IsNullOrEmpty(c.Imdb))
@@ -75,7 +76,7 @@ namespace Jellyfin.Plugin.OpenDouban.Providers
                 result.HasMetadata = true;
                 result.Item = p;
             }
-            
+
             return result;
         }
 

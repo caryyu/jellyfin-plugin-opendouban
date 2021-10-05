@@ -45,7 +45,7 @@ namespace Jellyfin.Plugin.OpenDouban.Providers
         {
             get
             {
-                if(string.IsNullOrEmpty(_pattern)) 
+                if (string.IsNullOrEmpty(_pattern))
                 {
                     return OddbPlugin.Instance?.Configuration.Pattern;
                 }
@@ -63,8 +63,9 @@ namespace Jellyfin.Plugin.OpenDouban.Providers
             ApiSubject subject = null;
 
             string sid = info.GetProviderId(OddbPlugin.ProviderId);
-            if(string.IsNullOrEmpty(sid)) {
-                sid =  info.SeriesProviderIds.Where(x => x.Key.Equals(OddbPlugin.ProviderId))?.FirstOrDefault().Value;
+            if (string.IsNullOrEmpty(sid))
+            {
+                sid = info.SeriesProviderIds.Where(x => x.Key.Equals(OddbPlugin.ProviderId))?.FirstOrDefault().Value;
             }
 
             if (!string.IsNullOrEmpty(sid))
@@ -78,7 +79,7 @@ namespace Jellyfin.Plugin.OpenDouban.Providers
                 _logger.LogInformation($"[Open DOUBAN] Season GetMetadata of [name]: \"{name}\"");
 
                 List<ApiSubject> res = await _oddbApiClient.PartialSearch(name);
-                
+
                 // Getting 1st item from the result
                 var has = res;
                 if (has.Any())
@@ -111,10 +112,11 @@ namespace Jellyfin.Plugin.OpenDouban.Providers
             result.QueriedById = true;
             result.HasMetadata = true;
 
-            if(x.Celebrities == null || !x.Celebrities.Any()) {
+            if (x.Celebrities == null || !x.Celebrities.Any())
+            {
                 // Load Persons & nice to have
                 x.Celebrities = await _oddbApiClient.GetCelebritiesBySid(sid);
-            } 
+            }
             x.Celebrities.ForEach(c => result.AddPerson(new MediaBrowser.Controller.Entities.PersonInfo
             {
                 Name = c.Name,
@@ -133,8 +135,9 @@ namespace Jellyfin.Plugin.OpenDouban.Providers
             List<ApiSubject> list = new List<ApiSubject>();
 
             string sid = info.GetProviderId(OddbPlugin.ProviderId);
-            if(string.IsNullOrEmpty(sid)) {
-                sid =  info.SeriesProviderIds.Where(x => x.Key.Equals(OddbPlugin.ProviderId))?.FirstOrDefault().Value;
+            if (string.IsNullOrEmpty(sid))
+            {
+                sid = info.SeriesProviderIds.Where(x => x.Key.Equals(OddbPlugin.ProviderId))?.FirstOrDefault().Value;
             }
 
             if (!string.IsNullOrEmpty(sid))

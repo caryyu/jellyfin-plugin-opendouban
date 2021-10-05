@@ -26,7 +26,7 @@ namespace Jellyfin.Plugin.OpenDouban.Tests
                 Name = "老友记 第二季",
                 SeriesProviderIds = new Dictionary<string, string> { { OddbPlugin.ProviderId, "1393859" } }
             };
-            
+
             var metadataResult = _doubanProvider.GetMetadata(seasonInfo, CancellationToken.None).Result;
             Assert.True(metadataResult.HasMetadata);
         }
