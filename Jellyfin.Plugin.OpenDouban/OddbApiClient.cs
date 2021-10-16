@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
@@ -169,6 +170,21 @@ namespace Jellyfin.Plugin.OpenDouban
         public string Language { get; set; }
         // "screen": "2002-01-26(中国大陆) / 2020-08-14(中国大陆重映) / 2001-11-04(英国首映) / 2001-11-16(美国)",
         public string Screen { get; set; }
+        public DateTime? ScreenTime
+        {
+            get
+            {
+                var items = Screen.Split("/");
+                if (items.Length >= 0)
+                {
+                    var item = items[0].Split("(")[0];
+                    DateTime result;
+                    DateTime.TryParseExact(item, "yyyy-MM-dd", null, System.Globalization.DateTimeStyles.None, out result);
+                    return result;
+                }
+                return null;
+            }
+        }
         // "duration": "152分钟 / 159分钟(加长版)",
         public string Duration { get; set; }
         // "subname": "哈利波特1：神秘的魔法石(港/台) / 哈1 / Harry Potter and the Philosopher's Stone",

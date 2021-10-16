@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Threading;
 using MediaBrowser.Controller.Providers;
@@ -59,8 +60,9 @@ namespace Jellyfin.Plugin.OpenDouban.Tests
             var meta = _provider.GetMetadata(info, CancellationToken.None).Result;
             Assert.True(meta.HasMetadata);
             Assert.Equal("源代码", meta.Item.Name);
+            Assert.Equal("Source Code", meta.Item.OriginalTitle);
             Assert.Equal("3075287", meta.Item.GetProviderId(OddbPlugin.ProviderId));
-            // Assert.Equal(DateTime.Parse("2011-08-30"), meta.Item.PremiereDate);
+            Assert.Equal(DateTime.Parse("2011-08-30"), meta.Item.PremiereDate);
 
             // Test 2: Already has provider Id.
             info = new MovieInfo()
