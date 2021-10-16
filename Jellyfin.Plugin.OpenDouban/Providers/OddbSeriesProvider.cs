@@ -131,14 +131,14 @@ namespace Jellyfin.Plugin.OpenDouban.Providers
             {
                 ProviderIds = new Dictionary<string, string> { { OddbPlugin.ProviderId, x.Sid } },
                 Name = x?.Name,
-                OriginalTitle = x?.Subname,
+                OriginalTitle = x?.OriginalName,
                 CommunityRating = x?.Rating,
                 Overview = x?.Intro,
                 ProductionYear = x?.Year,
                 HomePageUrl = "https://www.douban.com",
                 Genres = x?.Genre.Split("/").Select(x => x.Trim()).ToArray(),
                 // ProductionLocations = [x?.Country],
-                // PremiereDate = null,   
+                PremiereDate = x?.ScreenTime,   
             };
 
             info.SetProviderId(OddbPlugin.ProviderId, x.Sid);
