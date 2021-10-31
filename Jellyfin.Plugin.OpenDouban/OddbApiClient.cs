@@ -121,31 +121,10 @@ namespace Jellyfin.Plugin.OpenDouban
 
     public class ApiSubject
     {
-        // "name": "哈利·波特与魔法石 Harry Potter and the Sorcerer's Stone",
-        private string name;
-        public string Name
-        {
-            get
-            {
-                return name.Split(" ", 2)[0].Trim();
-            }
-            set
-            {
-                name = value;
-            }
-        }
-        public string FullName
-        {
-            get { return name; }
-        }
-        public string OriginalName
-        {
-            get
-            {
-                var names = name.Split(" ", 2);
-                return names.Length > 1 ? names[1].Trim() : names[0].Trim();
-            }
-        }
+        // "name": "哈利·波特与魔法石",
+        public string Name { get; set; }
+        // "originalName": "Harry Potter and the Sorcerer's Stone",
+        public string OriginalName { get; set; }
         // "rating": "9.1",
         public float Rating { get; set; }
         // "img": "https://img9.doubanio.com/view/photo/s_ratio_poster/public/p2614949805.webp",
