@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text.Json;
 using System.Net.Http;
-using MediaBrowser.Model.Serialization;
 using System.Threading.Tasks;
 
 namespace Jellyfin.Plugin.OpenDouban
@@ -13,17 +13,14 @@ namespace Jellyfin.Plugin.OpenDouban
     public sealed class OddbApiClient
     {
         private IHttpClientFactory httpClientFactory;
-        private IJsonSerializer jsonSerializer;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="OddbApiClient"/> class.
         /// </summary>
         /// <param name="httpClientFactory">Instance of the <see cref="IHttpClientFactory"/> interface.</param>
-        /// <param name="jsonSerializer">Instance of the <see cref="IJsonSerializer"/> interface.</param>
-        public OddbApiClient(IHttpClientFactory httpClientFactory, IJsonSerializer jsonSerializer)
+        public OddbApiClient(IHttpClientFactory httpClientFactory)
         {
             this.httpClientFactory = httpClientFactory;
-            this.jsonSerializer = jsonSerializer;
         }
 
         /// <summary>
@@ -50,7 +47,7 @@ namespace Jellyfin.Plugin.OpenDouban
             HttpResponseMessage response = await httpClientFactory.CreateClient().GetAsync(url).ConfigureAwait(false);
             response.EnsureSuccessStatusCode();
             Stream content = await response.Content.ReadAsStreamAsync();
-            List<ApiSubject> result = await jsonSerializer.DeserializeFromStreamAsync<List<ApiSubject>>(content);
+            List<ApiSubject> result = await JsonSerializer.DeserializeAsync<List<ApiSubject>>(content);
             return result;
         }
 
@@ -61,7 +58,7 @@ namespace Jellyfin.Plugin.OpenDouban
             HttpResponseMessage response = await httpClientFactory.CreateClient().GetAsync(url).ConfigureAwait(false);
             response.EnsureSuccessStatusCode();
             Stream content = await response.Content.ReadAsStreamAsync();
-            List<ApiSubject> result = await jsonSerializer.DeserializeFromStreamAsync<List<ApiSubject>>(content);
+            List<ApiSubject> result = await JsonSerializer.DeserializeAsync<List<ApiSubject>>(content);
             return result;
         }
 
@@ -72,7 +69,7 @@ namespace Jellyfin.Plugin.OpenDouban
             HttpResponseMessage response = await httpClientFactory.CreateClient().GetAsync(url).ConfigureAwait(false);
             response.EnsureSuccessStatusCode();
             Stream content = await response.Content.ReadAsStreamAsync();
-            ApiSubject result = await jsonSerializer.DeserializeFromStreamAsync<ApiSubject>(content);
+            ApiSubject result = await JsonSerializer.DeserializeAsync<ApiSubject>(content);
             return result;
         }
 
@@ -86,7 +83,7 @@ namespace Jellyfin.Plugin.OpenDouban
                 return new List<ApiCelebrity>();
             }
             Stream content = await response.Content.ReadAsStreamAsync();
-            List<ApiCelebrity> result = await jsonSerializer.DeserializeFromStreamAsync<List<ApiCelebrity>>(content);
+            List<ApiCelebrity> result = await JsonSerializer.DeserializeAsync<List<ApiCelebrity>>(content);
             return result;
         }
 
@@ -100,7 +97,7 @@ namespace Jellyfin.Plugin.OpenDouban
                 return null;
             }
             Stream content = await response.Content.ReadAsStreamAsync();
-            ApiCelebrity result = await jsonSerializer.DeserializeFromStreamAsync<ApiCelebrity>(content);
+            ApiCelebrity result = await JsonSerializer.DeserializeAsync<ApiCelebrity>(content);
             return result;
         }
 
@@ -114,7 +111,7 @@ namespace Jellyfin.Plugin.OpenDouban
                 return null;
             }
             Stream content = await response.Content.ReadAsStreamAsync();
-            List<ApiPhoto> result = await jsonSerializer.DeserializeFromStreamAsync<List<ApiPhoto>>(content);
+            List<ApiPhoto> result = await JsonSerializer.DeserializeAsync<List<ApiPhoto>>(content);
             return result;
         }
     }
