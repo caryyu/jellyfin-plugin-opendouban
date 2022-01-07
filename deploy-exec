@@ -8,10 +8,10 @@ REPODIR="/tmp/jellyfin-plugin-repo"
 version=$(echo -n $TAG | sed "s/v//g")
 changetime=$(date +%Y-%m-%dT%H:%M:%SZ)
 changelog=$(git show -s --format=%s)
-targetAbi="10.7.0.0"
+targetAbi="10.8.0.0"
 mirror_cn="https://gitee.com/caryyu/jellyfin-plugin-repo/raw/master/Jellyfin.Plugin.OpenDouban.$version.zip"
 mirror_us="https://github.com/caryyu/jellyfin-plugin-repo/raw/master/Jellyfin.Plugin.OpenDouban.$version.zip"
-DLL_PATH="$WORKDIR/Jellyfin.Plugin.OpenDouban/bin/Debug/net5.0/Jellyfin.Plugin.OpenDouban.dll"
+DLL_PATH="$WORKDIR/Jellyfin.Plugin.OpenDouban/bin/Debug/net6.0/Jellyfin.Plugin.OpenDouban.dll"
 PKG_NAME="$REPODIR/Jellyfin.Plugin.OpenDouban.$version.zip"
 
 setup() {
