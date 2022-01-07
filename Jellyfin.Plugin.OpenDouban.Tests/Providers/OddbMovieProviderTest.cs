@@ -9,6 +9,8 @@ using Xunit.Abstractions;
 using System.Text.RegularExpressions;
 using Jellyfin.Plugin.OpenDouban.Configuration;
 using Jellyfin.Plugin.OpenDouban.Providers;
+using System.Threading.Tasks;
+using Shouldly;
 
 namespace Jellyfin.Plugin.OpenDouban.Tests
 {
@@ -23,46 +25,45 @@ namespace Jellyfin.Plugin.OpenDouban.Tests
         }
 
         [Fact]
-        public void TestGetSearchResults()
+        public async Task TestGetSearchResults()
         {
             // Test 1: search metadata.
-            MovieInfo info = new MovieInfo()
+            MovieInfo info = new ()
             {
                 Name = "蝙蝠侠.黑暗骑士",
             };
 
-            var result = _provider.GetSearchResults(info, CancellationToken.None).Result;
-            Assert.NotEmpty(result);
-            Assert.True(result.Count() > 1);
+            var result = await _provider.GetSearchResults(info, CancellationToken.None);
+            result.ShouldNotBeNull();
+            result.Count().ShouldBeGreaterThan(1);
             string doubanId = result.FirstOrDefault()?.GetProviderId(OddbPlugin.ProviderId);
             int? year = result.FirstOrDefault()?.ProductionYear;
-            Assert.Equal("1851857", doubanId);
-            Assert.Equal(2008, year);
+            doubanId.ShouldBe("1851857");
+            year.ShouldBe(2008);
 
             // Test 2: Already has provider Id.
             info.SetProviderId(OddbPlugin.ProviderId, "1851857");
-            result = _provider.GetSearchResults(info, CancellationToken.None).Result;
-            Assert.True(result.Count() == 1);
+            result = await _provider.GetSearchResults(info, CancellationToken.None);
+            result.Count().ShouldBe(1);
             doubanId = result.FirstOrDefault()?.GetProviderId(OddbPlugin.ProviderId);
             year = result.FirstOrDefault()?.ProductionYear;
-            Assert.Equal("1851857", doubanId);
-            Assert.Equal(2008, year);
+            doubanId.ShouldBe("1851857");
+            year.ShouldBe(2008);
         }
 
         [Fact]
-        public void TestGetMetadata()
+        public async Task TestGetMetadata()
         {
             // Test 1: Normal case.
-            MovieInfo info = new MovieInfo()
+            var info = new MovieInfo()
             {
                 Name = "源代码"
             };
-            var meta = _provider.GetMetadata(info, CancellationToken.None).Result;
-            Assert.True(meta.HasMetadata);
-            Assert.Equal("源代码", meta.Item.Name);
-            Assert.Equal("Source Code", meta.Item.OriginalTitle);
-            Assert.Equal("3075287", meta.Item.GetProviderId(OddbPlugin.ProviderId));
-            Assert.Equal(DateTime.Parse("2011-08-30"), meta.Item.PremiereDate);
+            var meta = await _provider.GetMetadata(info, CancellationToken.None);
+            meta.HasMetadata.ShouldBeTrue();
+            meta.Item.Name.ShouldBe("源代码");
+            meta.Item.GetProviderId(OddbPlugin.ProviderId).ShouldBe("3075287");
+            meta.Item.PremiereDate.ShouldBe(DateTime.Parse("2011-08-30"));
 
             // Test 2: Already has provider Id.
             info = new MovieInfo()
@@ -70,15 +71,15 @@ namespace Jellyfin.Plugin.OpenDouban.Tests
                 Name = "Source Code"
             };
             info.SetProviderId(OddbPlugin.ProviderId, "1851857");
-            meta = _provider.GetMetadata(info, CancellationToken.None).Result;
-            Assert.True(meta.HasMetadata);
-            Assert.Equal("蝙蝠侠：黑暗骑士", meta.Item.Name);
+            meta = await _provider.GetMetadata(info, CancellationToken.None);
+            meta.HasMetadata.ShouldBeTrue();
+            meta.Item.Name.ShouldBe("蝙蝠侠：黑暗骑士");
         }
 
         [Fact]
         public void TestNameRegexFiltering()
         {
-            PluginConfiguration cfg = new PluginConfiguration();
+            PluginConfiguration cfg = new();
 
             string[] names = {
               "Loki.S01E03.HDR.2160p.WEB.H265-EXPLOIT.mkv",
@@ -101,10 +102,9 @@ namespace Jellyfin.Plugin.OpenDouban.Tests
             // Titanic 1997
             // The Lion King 2019
             // The Croods A New Age 2020
-
-            Assert.Equal("Loki", Regex.Replace(names[0], cfg.Pattern, " ").Trim());
-            Assert.Equal("The Lion King 2019", Regex.Replace(names[7], cfg.Pattern, " ").Trim());
-            Assert.Equal("The Croods A New Age 2020", Regex.Replace(names[8], cfg.Pattern, " ").Trim());
+            Regex.Replace(names[0], cfg.Pattern, " ").Trim().ShouldBe("Loki");
+            Regex.Replace(names[7], cfg.Pattern, " ").Trim().ShouldBe("The Lion King 2019");
+            Regex.Replace(names[8], cfg.Pattern, " ").Trim().ShouldBe("The Croods A New Age 2020");
         }
     }
 }
