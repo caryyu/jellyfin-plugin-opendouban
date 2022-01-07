@@ -9,7 +9,11 @@ This plugin is another implementation based on https://github.com/caryyu/douban-
 
 ## Install Plugin
 
-Only support `10.7.0-rc3` and above
+### Versions Comparison
+
+- Plugin Version `1.x.x` is for `Jellyfin 10.7.x` and ONLY supports `10.7.0-rc3` and above
+- Plugin Version `2.x.x` is for `Jellyfin 10.8.x` and ONLY supports `10.8.0-alpha1` and above
+
 
 Automatically:
 
