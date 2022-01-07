@@ -37,23 +37,23 @@ namespace Jellyfin.Plugin.OpenDouban.Providers
         public string Name => OddbPlugin.ProviderName;
 
         /// <inheritdoc />
-        public Task<IEnumerable<RemoteSearchResult>> GetSearchResults(PersonLookupInfo searchInfo, CancellationToken cancellationToken)
+        public async Task<IEnumerable<RemoteSearchResult>> GetSearchResults(PersonLookupInfo searchInfo, CancellationToken cancellationToken)
         {
-            return Task.FromResult<IEnumerable<RemoteSearchResult>>(new List<RemoteSearchResult>());
+            return new List<RemoteSearchResult>();
         }
 
         /// <inheritdoc />
         public async Task<MetadataResult<Person>> GetMetadata(PersonLookupInfo info, CancellationToken cancellationToken)
         {
-            MetadataResult<Person> result = new();
+            MetadataResult<Person> result = new MetadataResult<Person>();
 
             string cid = info.GetProviderId(OddbPlugin.ProviderId);
             _logger.LogInformation($"[Open DOUBAN] Person GetMetadata of [cid]: \"{cid}\"");
-            ApiCelebrity c = await _oddbApiClient.GetCelebrityByCid(cid, cancellationToken);
+            ApiCelebrity c = await _oddbApiClient.GetCelebrityByCid(cid);
 
             if (c != null)
             {
-                Person p = new()
+                Person p = new Person
                 {
                     Name = c.Name,
                     HomePageUrl = c.Site,
@@ -84,7 +84,7 @@ namespace Jellyfin.Plugin.OpenDouban.Providers
         public async Task<HttpResponseMessage> GetImageResponse(string url, CancellationToken cancellationToken)
         {
             _logger.LogInformation("[Open DOUBAN] Person GetImageResponse url: {0}", url);
-            HttpResponseMessage response = await _httpClientFactory.CreateClient().GetAsync(url);
+            HttpResponseMessage response = await _httpClientFactory.CreateClient().GetAsync(url).ConfigureAwait(false);
             response.EnsureSuccessStatusCode();
             return response;
         }

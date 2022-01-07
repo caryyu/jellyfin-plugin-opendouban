@@ -5,8 +5,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 using Xunit.Abstractions;
 using Jellyfin.Plugin.OpenDouban.Providers;
-using System.Threading.Tasks;
-using Shouldly;
 
 namespace Jellyfin.Plugin.OpenDouban.Tests
 {
@@ -20,16 +18,16 @@ namespace Jellyfin.Plugin.OpenDouban.Tests
         }
 
         [Fact]
-        public async Task TestGetMetadata()
+        public void TestGetMetadata()
         {
-            var info = new PersonLookupInfo
+            PersonLookupInfo info = new PersonLookupInfo
             {
                 ProviderIds = new Dictionary<string, string> { { OddbPlugin.ProviderId, "1032025" } }
             };
 
-            var meta = await _provider.GetMetadata(info, CancellationToken.None);
-            meta.HasMetadata.ShouldBeTrue();
-            meta.Item.Name.ShouldBe("肖恩·比格斯代夫");
+            var meta = _provider.GetMetadata(info, CancellationToken.None).Result;
+            Assert.True(meta.HasMetadata);
+            Assert.Equal("肖恩·比格斯代夫", meta.Item.Name);
         }
     }
 }

@@ -1,7 +1,5 @@
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
-using Shouldly;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -18,32 +16,32 @@ namespace Jellyfin.Plugin.OpenDouban.Tests
         }
 
         [Fact]
-        public async Task TestFullSearch()
+        public void TestFullSearch()
         {
-            List<ApiSubject> list = await _oddbApiClient.FullSearch("Harry Potter");
-            list.ShouldNotBeNull();
+            List<ApiSubject> list = _oddbApiClient.FullSearch("Harry Potter").Result;
+            Assert.NotEmpty(list);
         }
 
         [Fact]
-        public async Task TestPartialSearch()
+        public void TestPartialSearch()
         {
-            List<ApiSubject> list = await _oddbApiClient.PartialSearch("Harry Potter");
-            list.ShouldNotBeNull();
+            List<ApiSubject> list = _oddbApiClient.PartialSearch("Harry Potter").Result;
+            Assert.NotEmpty(list);
         }
 
         [Fact]
-        public async Task TestGetBySid()
+        public void TestGetBySid()
         {
-            ApiSubject result = await _oddbApiClient.GetBySid("1295038");
-            result.Celebrities.ShouldNotBeNull();
-            result.Sid.ShouldBe("1295038");
+            ApiSubject result = _oddbApiClient.GetBySid("1295038").Result;
+            Assert.Equal("1295038", result.Sid);
+            Assert.NotEmpty(result.Celebrities);
         }
 
         [Fact]
-        public async Task TestGetPhotoBySid()
+        public void TestGetPhotoBySid()
         {
-            List<ApiPhoto> list = await _oddbApiClient.GetPhotoBySid("30435124");
-            list.ShouldNotBeNull();
+            List<ApiPhoto> list = _oddbApiClient.GetPhotoBySid("30435124").Result;
+            Assert.NotEmpty(list);
         }
     }
 }

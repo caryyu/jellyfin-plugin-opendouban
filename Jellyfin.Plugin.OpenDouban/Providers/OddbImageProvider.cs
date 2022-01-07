@@ -1,6 +1,9 @@
+using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.IO;
 using System.Net.Http;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using MediaBrowser.Controller.Entities;
@@ -18,9 +21,9 @@ namespace Jellyfin.Plugin.OpenDouban.Providers
     /// </summary>
     public class OddbImageProvider : IRemoteImageProvider
     {
-        private readonly ILogger<OddbImageProvider> _logger;
-        private readonly IHttpClientFactory _httpClientFactory;
-        private readonly OddbApiClient _oddbApiClient;
+        private ILogger<OddbImageProvider> _logger;
+        private IHttpClientFactory _httpClientFactory;
+        private OddbApiClient _oddbApiClient;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="OddbImageProvider"/> class.
@@ -61,7 +64,7 @@ namespace Jellyfin.Plugin.OpenDouban.Providers
                 return new List<RemoteImageInfo>();
             }
 
-            var primary = await _oddbApiClient.GetBySid(sid, cancellationToken);
+            var primary = await _oddbApiClient.GetBySid(sid);
             var dropback = await GetBackdrop(sid, cancellationToken);
 
             var res = new List<RemoteImageInfo> {
@@ -80,7 +83,7 @@ namespace Jellyfin.Plugin.OpenDouban.Providers
         public async Task<HttpResponseMessage> GetImageResponse(string url, CancellationToken cancellationToken)
         {
             _logger.LogInformation("[DOUBAN] GetImageResponse url: {0}", url);
-            HttpResponseMessage response = await _httpClientFactory.CreateClient().GetAsync(url, cancellationToken);
+            HttpResponseMessage response = await _httpClientFactory.CreateClient().GetAsync(url).ConfigureAwait(false);
             response.EnsureSuccessStatusCode();
             return response;
         }
@@ -93,7 +96,7 @@ namespace Jellyfin.Plugin.OpenDouban.Providers
         public async Task<IEnumerable<RemoteImageInfo>> GetBackdrop(string sid, CancellationToken cancellationToken)
         {
             _logger.LogInformation("[DOUBAN] GetBackdrop of sid: {0}", sid);
-            var photo = await _oddbApiClient.GetPhotoBySid(sid, cancellationToken);
+            var photo = await _oddbApiClient.GetPhotoBySid(sid);
             var list = new List<RemoteImageInfo>();
 
             if (photo == null)

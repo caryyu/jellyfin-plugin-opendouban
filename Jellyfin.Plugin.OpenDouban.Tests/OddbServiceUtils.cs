@@ -21,7 +21,7 @@ namespace Jellyfin.Plugin.OpenDouban.Tests
 
             var serviceProvider = services.BuildServiceProvider();
             var oddbApiClient = serviceProvider.GetService<OddbApiClient>();
-            oddbApiClient.ApiBaseUri = "http://localhost:8080";
+            oddbApiClient.ApiBaseUri = "http://localhost:5000";
 
             return serviceProvider;
         }

@@ -5,8 +5,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 using Xunit.Abstractions;
 using Jellyfin.Plugin.OpenDouban.Providers;
-using System.Threading.Tasks;
-using Shouldly;
 
 namespace Jellyfin.Plugin.OpenDouban.Tests
 {
@@ -21,16 +19,16 @@ namespace Jellyfin.Plugin.OpenDouban.Tests
         }
 
         [Fact]
-        public async Task TestGetSeasonMetadata()
+        public void TestGetSeasonMetadata()
         {
-            SeasonInfo seasonInfo = new()
+            SeasonInfo seasonInfo = new SeasonInfo
             {
                 Name = "老友记 第二季",
                 SeriesProviderIds = new Dictionary<string, string> { { OddbPlugin.ProviderId, "1393859" } }
             };
 
-            var metadataResult = await _doubanProvider.GetMetadata(seasonInfo, CancellationToken.None);
-            metadataResult.HasMetadata.ShouldBeTrue();
+            var metadataResult = _doubanProvider.GetMetadata(seasonInfo, CancellationToken.None).Result;
+            Assert.True(metadataResult.HasMetadata);
         }
     }
 }
