@@ -66,13 +66,13 @@ namespace Jellyfin.Plugin.OpenDouban.Providers
             if (!string.IsNullOrEmpty(sid))
             {
                 _logger.LogInformation($"[Open DOUBAN] GetSearchResults of [sid]: \"{sid}\"");
-                ApiSubject res = await _oddbApiClient.GetBySid(sid);
+                ApiSubject res = await _oddbApiClient.GetBySid(sid, cancellationToken);
                 list.Add(res);
             }
             else if (!string.IsNullOrEmpty(info.Name))
             {
                 _logger.LogInformation($"[Open DOUBAN] GetSearchResults of [name]: \"{info.Name}\"");
-                List<ApiSubject> res = await _oddbApiClient.PartialSearch(info.Name);
+                List<ApiSubject> res = await _oddbApiClient.PartialSearch(info.Name, cancellationToken);
                 list.AddRange(res);
             }
 
@@ -103,21 +103,21 @@ namespace Jellyfin.Plugin.OpenDouban.Providers
             if (!string.IsNullOrEmpty(sid))
             {
                 _logger.LogInformation($"[Open DOUBAN] GetMetadata of [sid]: \"{sid}\"");
-                subject = await _oddbApiClient.GetBySid(sid);
+                subject = await _oddbApiClient.GetBySid(sid, cancellationToken);
             }
             else if (!string.IsNullOrEmpty(info.Name))
             {
                 string name = Regex.Replace(info.Name, Pattern, " ");
                 _logger.LogInformation($"[Open DOUBAN] GetMetadata of [name]: \"{name}\"");
 
-                List<ApiSubject> res = await _oddbApiClient.PartialSearch(name);
+                List<ApiSubject> res = await _oddbApiClient.PartialSearch(name, cancellationToken);
 
                 // Getting 1st item from the result
                 var has = res;
                 if (has.Any())
                 {
                     sid = has.FirstOrDefault().Sid;
-                    subject = await _oddbApiClient.GetBySid(sid);
+                    subject = await _oddbApiClient.GetBySid(sid, cancellationToken);
                 }
             }
 
@@ -149,7 +149,7 @@ namespace Jellyfin.Plugin.OpenDouban.Providers
             result.QueriedById = true;
             result.HasMetadata = true;
 
-            x.Celebrities = await _oddbApiClient.GetCelebritiesBySid(sid);
+            x.Celebrities = await _oddbApiClient.GetCelebritiesBySid(sid, cancellationToken);
 
             x.Celebrities.ForEach(c => result.AddPerson(new MediaBrowser.Controller.Entities.PersonInfo
             {

@@ -39,7 +39,7 @@ namespace Jellyfin.Plugin.OpenDouban.Providers
         /// <inheritdoc />
         public async Task<IEnumerable<RemoteSearchResult>> GetSearchResults(PersonLookupInfo searchInfo, CancellationToken cancellationToken)
         {
-            return new List<RemoteSearchResult>();
+            return await Task.FromResult<IEnumerable<RemoteSearchResult>>(new List<RemoteSearchResult>());
         }
 
         /// <inheritdoc />
@@ -49,7 +49,7 @@ namespace Jellyfin.Plugin.OpenDouban.Providers
 
             string cid = info.GetProviderId(OddbPlugin.ProviderId);
             _logger.LogInformation($"[Open DOUBAN] Person GetMetadata of [cid]: \"{cid}\"");
-            ApiCelebrity c = await _oddbApiClient.GetCelebrityByCid(cid);
+            ApiCelebrity c = await _oddbApiClient.GetCelebrityByCid(cid, cancellationToken);
 
             if (c != null)
             {
