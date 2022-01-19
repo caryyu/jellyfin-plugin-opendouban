@@ -71,21 +71,21 @@ namespace Jellyfin.Plugin.OpenDouban.Providers
             if (!string.IsNullOrEmpty(sid))
             {
                 _logger.LogInformation($"[Open DOUBAN] Season GetMetadata of [sid]: \"{sid}\"");
-                subject = await _oddbApiClient.GetBySid(sid);
+                subject = await _oddbApiClient.GetBySid(sid, cancellationToken);
             }
             else if (!string.IsNullOrEmpty(info.Name))
             {
                 string name = Regex.Replace(info.Name, Pattern, " ");
                 _logger.LogInformation($"[Open DOUBAN] Season GetMetadata of [name]: \"{name}\"");
 
-                List<ApiSubject> res = await _oddbApiClient.PartialSearch(name);
+                List<ApiSubject> res = await _oddbApiClient.PartialSearch(name, cancellationToken);
 
                 // Getting 1st item from the result
                 var has = res;
                 if (has.Any())
                 {
                     sid = has.FirstOrDefault().Sid;
-                    subject = await _oddbApiClient.GetBySid(sid);
+                    subject = await _oddbApiClient.GetBySid(sid, cancellationToken);
                 }
             }
 
@@ -115,7 +115,7 @@ namespace Jellyfin.Plugin.OpenDouban.Providers
             if (x.Celebrities == null || !x.Celebrities.Any())
             {
                 // Load Persons & nice to have
-                x.Celebrities = await _oddbApiClient.GetCelebritiesBySid(sid);
+                x.Celebrities = await _oddbApiClient.GetCelebritiesBySid(sid, cancellationToken);
             }
             x.Celebrities.ForEach(c => result.AddPerson(new MediaBrowser.Controller.Entities.PersonInfo
             {
@@ -143,13 +143,13 @@ namespace Jellyfin.Plugin.OpenDouban.Providers
             if (!string.IsNullOrEmpty(sid))
             {
                 _logger.LogInformation($"[Open DOUBAN] Season GetSearchResults of [sid]: \"{sid}\"");
-                ApiSubject res = await _oddbApiClient.GetBySid(sid);
+                ApiSubject res = await _oddbApiClient.GetBySid(sid, cancellationToken);
                 list.Add(res);
             }
             else if (!string.IsNullOrEmpty(info.Name))
             {
                 _logger.LogInformation($"[Open DOUBAN] Season GetSearchResults of [name]: \"{info.Name}\"");
-                List<ApiSubject> res = await _oddbApiClient.PartialSearch(info.Name);
+                List<ApiSubject> res = await _oddbApiClient.PartialSearch(info.Name, cancellationToken);
                 list.AddRange(res);
             }
 
@@ -175,7 +175,7 @@ namespace Jellyfin.Plugin.OpenDouban.Providers
         public async Task<HttpResponseMessage> GetImageResponse(string url, CancellationToken cancellationToken)
         {
             _logger.LogInformation("[DOUBAN] GetImageResponse url: {0}", url);
-            HttpResponseMessage response = await _httpClientFactory.CreateClient().GetAsync(url).ConfigureAwait(false);
+            HttpResponseMessage response = await _httpClientFactory.CreateClient().GetAsync(url, cancellationToken).ConfigureAwait(false);
             response.EnsureSuccessStatusCode();
             return response;
         }
