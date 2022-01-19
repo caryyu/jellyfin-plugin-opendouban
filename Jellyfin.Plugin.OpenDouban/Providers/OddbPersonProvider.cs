@@ -84,7 +84,7 @@ namespace Jellyfin.Plugin.OpenDouban.Providers
         public async Task<HttpResponseMessage> GetImageResponse(string url, CancellationToken cancellationToken)
         {
             _logger.LogInformation("[Open DOUBAN] Person GetImageResponse url: {0}", url);
-            HttpResponseMessage response = await _httpClientFactory.CreateClient().GetAsync(url).ConfigureAwait(false);
+            HttpResponseMessage response = await _httpClientFactory.CreateClient().GetAsync(url, cancellationToken).ConfigureAwait(false);
             response.EnsureSuccessStatusCode();
             return response;
         }

@@ -138,7 +138,7 @@ namespace Jellyfin.Plugin.OpenDouban.Providers
                 HomePageUrl = "https://www.douban.com",
                 Genres = x?.Genre.Split("/").Select(x => x.Trim()).ToArray(),
                 // ProductionLocations = [x?.Country],
-                PremiereDate = x?.ScreenTime,   
+                PremiereDate = x?.ScreenTime,
             };
 
             info.SetProviderId(OddbPlugin.ProviderId, x.Sid);
@@ -168,7 +168,7 @@ namespace Jellyfin.Plugin.OpenDouban.Providers
         public async Task<HttpResponseMessage> GetImageResponse(string url, CancellationToken cancellationToken)
         {
             _logger.LogInformation("[DOUBAN] GetImageResponse url: {0}", url);
-            HttpResponseMessage response = await _httpClientFactory.CreateClient().GetAsync(url).ConfigureAwait(false);
+            HttpResponseMessage response = await _httpClientFactory.CreateClient().GetAsync(url, cancellationToken).ConfigureAwait(false);
             response.EnsureSuccessStatusCode();
             return response;
         }
