@@ -4,6 +4,7 @@ using System.IO;
 using System.Net.Http;
 using MediaBrowser.Model.Serialization;
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace Jellyfin.Plugin.OpenDouban
 {
@@ -43,77 +44,77 @@ namespace Jellyfin.Plugin.OpenDouban
             set { _apiBaseUri = value; }
         }
 
-        public async Task<List<ApiSubject>> FullSearch(string keyword)
+        public async Task<List<ApiSubject>> FullSearch(string keyword, CancellationToken cancellationToken = default)
         {
             string url = $"{ApiBaseUri}/movies?q={keyword}&type=full";
 
-            HttpResponseMessage response = await httpClientFactory.CreateClient().GetAsync(url).ConfigureAwait(false);
+            HttpResponseMessage response = await httpClientFactory.CreateClient().GetAsync(url, cancellationToken).ConfigureAwait(false);
             response.EnsureSuccessStatusCode();
-            Stream content = await response.Content.ReadAsStreamAsync();
+            Stream content = await response.Content.ReadAsStreamAsync(cancellationToken);
             List<ApiSubject> result = await jsonSerializer.DeserializeFromStreamAsync<List<ApiSubject>>(content);
             return result;
         }
 
-        public async Task<List<ApiSubject>> PartialSearch(string keyword)
+        public async Task<List<ApiSubject>> PartialSearch(string keyword, CancellationToken cancellationToken = default)
         {
             string url = $"{ApiBaseUri}/movies?q={keyword}&type=partial";
 
-            HttpResponseMessage response = await httpClientFactory.CreateClient().GetAsync(url).ConfigureAwait(false);
+            HttpResponseMessage response = await httpClientFactory.CreateClient().GetAsync(url, cancellationToken).ConfigureAwait(false);
             response.EnsureSuccessStatusCode();
-            Stream content = await response.Content.ReadAsStreamAsync();
+            Stream content = await response.Content.ReadAsStreamAsync(cancellationToken);
             List<ApiSubject> result = await jsonSerializer.DeserializeFromStreamAsync<List<ApiSubject>>(content);
             return result;
         }
 
-        public async Task<ApiSubject> GetBySid(string sid)
+        public async Task<ApiSubject> GetBySid(string sid, CancellationToken cancellationToken = default)
         {
             string url = $"{ApiBaseUri}/movies/{sid}";
 
-            HttpResponseMessage response = await httpClientFactory.CreateClient().GetAsync(url).ConfigureAwait(false);
+            HttpResponseMessage response = await httpClientFactory.CreateClient().GetAsync(url, cancellationToken).ConfigureAwait(false);
             response.EnsureSuccessStatusCode();
-            Stream content = await response.Content.ReadAsStreamAsync();
+            Stream content = await response.Content.ReadAsStreamAsync(cancellationToken);
             ApiSubject result = await jsonSerializer.DeserializeFromStreamAsync<ApiSubject>(content);
             return result;
         }
 
-        public async Task<List<ApiCelebrity>> GetCelebritiesBySid(string sid)
+        public async Task<List<ApiCelebrity>> GetCelebritiesBySid(string sid, CancellationToken cancellationToken = default)
         {
             string url = $"{ApiBaseUri}/movies/{sid}/celebrities";
 
-            HttpResponseMessage response = await httpClientFactory.CreateClient().GetAsync(url).ConfigureAwait(false);
+            HttpResponseMessage response = await httpClientFactory.CreateClient().GetAsync(url, cancellationToken).ConfigureAwait(false);
             if (!response.IsSuccessStatusCode)
             {
                 return new List<ApiCelebrity>();
             }
-            Stream content = await response.Content.ReadAsStreamAsync();
+            Stream content = await response.Content.ReadAsStreamAsync(cancellationToken);
             List<ApiCelebrity> result = await jsonSerializer.DeserializeFromStreamAsync<List<ApiCelebrity>>(content);
             return result;
         }
 
-        public async Task<ApiCelebrity> GetCelebrityByCid(string cid)
+        public async Task<ApiCelebrity> GetCelebrityByCid(string cid, CancellationToken cancellationToken = default)
         {
             string url = $"{ApiBaseUri}/celebrities/{cid}";
 
-            HttpResponseMessage response = await httpClientFactory.CreateClient().GetAsync(url).ConfigureAwait(false);
+            HttpResponseMessage response = await httpClientFactory.CreateClient().GetAsync(url, cancellationToken).ConfigureAwait(false);
             if (!response.IsSuccessStatusCode)
             {
                 return null;
             }
-            Stream content = await response.Content.ReadAsStreamAsync();
+            Stream content = await response.Content.ReadAsStreamAsync(cancellationToken);
             ApiCelebrity result = await jsonSerializer.DeserializeFromStreamAsync<ApiCelebrity>(content);
             return result;
         }
 
-        public async Task<List<ApiPhoto>> GetPhotoBySid(string sid)
+        public async Task<List<ApiPhoto>> GetPhotoBySid(string sid, CancellationToken cancellationToken = default)
         {
             string url = $"{ApiBaseUri}/photo/{sid}";
 
-            HttpResponseMessage response = await httpClientFactory.CreateClient().GetAsync(url).ConfigureAwait(false);
+            HttpResponseMessage response = await httpClientFactory.CreateClient().GetAsync(url, cancellationToken).ConfigureAwait(false);
             if (!response.IsSuccessStatusCode)
             {
                 return null;
             }
-            Stream content = await response.Content.ReadAsStreamAsync();
+            Stream content = await response.Content.ReadAsStreamAsync(cancellationToken);
             List<ApiPhoto> result = await jsonSerializer.DeserializeFromStreamAsync<List<ApiPhoto>>(content);
             return result;
         }
