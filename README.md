@@ -1,7 +1,8 @@
 # Open Douban plugin for Jellyfin
 
-This plugin is another implementation based on https://github.com/caryyu/douban-openapi-server without any `ApiKey` preset, which's originated from the plugin
- (https://github.com/Libitum/jellyfin-plugin-douban) and has already made a lot changes, ideally, these two plugins can coexist in Jellyfin, really appreciate the original author for providing a Douban-integrated plugin 
+This plugin amis to scrape `Douban` media informations for your self-hosted Jellyfin server, which relies on the project of https://github.com/caryyu/douban-openapi-server that uses `Web Spider` technology crawling public sites without any AuthN/AuthZ setup, however, this approach could be prevented by its `Rate-Limiting` mechanism of a certain period of time unable to visit.
+
+> Note: This project initially comes from https://github.com/Libitum/jellyfin-plugin-douban, but both can coexist in the same Jellyfin server
 
 # Discussion
 
