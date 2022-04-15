@@ -44,7 +44,9 @@ namespace Jellyfin.Plugin.OpenDouban
         {
             string url = $"{ApiBaseUri}/movies?q={keyword}&type=full";
 
-            HttpResponseMessage response = await httpClientFactory.CreateClient().GetAsync(url, cancellationToken).ConfigureAwait(false);
+            var client =  httpClientFactory.CreateClient();
+            client.DefaultRequestHeaders.Referrer = new System.Uri("https://movie.douban.com/");
+            HttpResponseMessage response = await client.GetAsync(url, cancellationToken).ConfigureAwait(false);
             response.EnsureSuccessStatusCode();
             List<ApiSubject> result = await response.Content.ReadFromJsonAsync<List<ApiSubject>>(cancellationToken: cancellationToken);
             return result;
