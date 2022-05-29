@@ -100,6 +100,5 @@ trigger_git_push() {
 
 setup
 checksum=$(cat $PKG_NAME | md5sum | cut -d' ' -f1)
-change_manifest_file "manifest-cn.json" $mirror_cn
 change_manifest_file "manifest-us.json" $mirror_us
 trigger_git_push
