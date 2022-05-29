@@ -18,7 +18,7 @@ This plugin amis to scrape `Douban` media informations for your self-hosted Jell
 
 Automatically:
 
-- China: https://gitee.com/caryyu/jellyfin-plugin-repo/raw/master/manifest-cn.json
+- ~~China: https://gitee.com/caryyu/jellyfin-plugin-repo/raw/master/manifest-cn.json~~ (Gitee has shut its Pages down)
 - U.S: https://github.com/caryyu/jellyfin-plugin-repo/raw/master/manifest-us.json
 
 Manually:
