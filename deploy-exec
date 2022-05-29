@@ -9,27 +9,21 @@ version=$(echo -n $TAG | sed "s/v//g")
 changetime=$(date +%Y-%m-%dT%H:%M:%SZ)
 changelog=$(git show -s --format=%s)
 targetAbi="10.7.0.0"
-mirror_cn="https://gitee.com/caryyu/jellyfin-plugin-repo/raw/master/Jellyfin.Plugin.OpenDouban.$version.zip"
 mirror_us="https://github.com/caryyu/jellyfin-plugin-repo/raw/master/Jellyfin.Plugin.OpenDouban.$version.zip"
 DLL_PATH="$WORKDIR/Jellyfin.Plugin.OpenDouban/bin/Debug/net5.0/Jellyfin.Plugin.OpenDouban.dll"
 PKG_NAME="$REPODIR/Jellyfin.Plugin.OpenDouban.$version.zip"
 
 setup() {
     echo -n ${SSH_PRIVKEY_GITHUB} | base64 -d > /tmp/github-privkey
-    echo -n ${SSH_PRIVKEY_GITEE} | base64 -d > /tmp/gitee-privkey
     chmod 400 /tmp/github-privkey
-    chmod 400 /tmp/gitee-privkey
 
     eval $(ssh-agent)
     mkdir -p ~/.ssh
     ssh-add -k /tmp/github-privkey
     ssh-keyscan -t rsa github.com > ~/.ssh/known_hosts
-    ssh-add -k /tmp/gitee-privkey
-    ssh-keyscan -t rsa gitee.com >> ~/.ssh/known_hosts
 
     git clone git@github.com:caryyu/jellyfin-plugin-repo.git $REPODIR
     cd $REPODIR
-    git remote add gitee git@gitee.com:caryyu/jellyfin-plugin-repo.git
 
     git remote -v
     ls -la
@@ -101,12 +95,10 @@ trigger_git_push() {
     git status
     git commit -m "release jellyfin-plugin-douban $version"
     git push origin
-    git push gitee
     cd $WORKDIR
 }
 
 setup
 checksum=$(cat $PKG_NAME | md5sum | cut -d' ' -f1)
-change_manifest_file "manifest-cn.json" $mirror_cn
 change_manifest_file "manifest-us.json" $mirror_us
 trigger_git_push
