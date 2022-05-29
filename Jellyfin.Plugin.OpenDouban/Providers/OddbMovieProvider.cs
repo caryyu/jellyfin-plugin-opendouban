@@ -154,7 +154,7 @@ namespace Jellyfin.Plugin.OpenDouban.Providers
             x.Celebrities.ForEach(c => result.AddPerson(new MediaBrowser.Controller.Entities.PersonInfo
             {
                 Name = c.Name,
-                Type = c.Role.Equals("导演") ? PersonType.Director : c.Role.Equals("演员") ? PersonType.Actor : c.Role,
+                Type = c.Role.Equals("导演") ? PersonType.Director : PersonType.Actor,
                 Role = c.Role,
                 ImageUrl = c.Img,
                 ProviderIds = new Dictionary<string, string> { { OddbPlugin.ProviderId, c.Id } },
