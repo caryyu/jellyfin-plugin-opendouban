@@ -9,6 +9,7 @@ using MediaBrowser.Model.Entities;
 using MediaBrowser.Model.Providers;
 using Microsoft.Extensions.Logging;
 using System.Text.RegularExpressions;
+using Jellyfin.Plugin.OpenDouban.Providers.Utils;
 
 namespace Jellyfin.Plugin.OpenDouban.Providers
 {
@@ -87,7 +88,7 @@ namespace Jellyfin.Plugin.OpenDouban.Providers
                 return new RemoteSearchResult
                 {
                     ProviderIds = new Dictionary<string, string> { { OddbPlugin.ProviderId, x.Sid } },
-                    ImageUrl = x?.Img,
+                    ImageUrl = ImageUtils.FixForbiddenImageDomain(x?.Img),
                     ProductionYear = x?.Year,
                     Name = x?.Name
                 };
