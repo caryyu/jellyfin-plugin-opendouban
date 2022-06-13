@@ -13,6 +13,7 @@ using MediaBrowser.Controller.Providers;
 using MediaBrowser.Model.Entities;
 using MediaBrowser.Model.Providers;
 using Microsoft.Extensions.Logging;
+using Jellyfin.Plugin.OpenDouban.Providers.Utils;
 
 namespace Jellyfin.Plugin.OpenDouban.Providers
 {
@@ -65,6 +66,7 @@ namespace Jellyfin.Plugin.OpenDouban.Providers
             }
 
             var primary = await _oddbApiClient.GetBySid(sid, cancellationToken);
+            primary.Img = ImageUtils.GetHighQualityImage(primary.Img, OddbPlugin.Instance?.Configuration.PosterQuality);
             var dropback = await GetBackdrop(sid, cancellationToken);
 
             var res = new List<RemoteImageInfo> {
