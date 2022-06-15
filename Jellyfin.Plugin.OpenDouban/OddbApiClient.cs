@@ -6,6 +6,7 @@ using System.Net.Http;
 using MediaBrowser.Model.Serialization;
 using System.Threading.Tasks;
 using System.Threading;
+using Microsoft.AspNetCore.WebUtilities;
 
 namespace Jellyfin.Plugin.OpenDouban
 {
@@ -69,15 +70,15 @@ namespace Jellyfin.Plugin.OpenDouban
 
         public async Task<ApiSubject> GetBySid(string sid, CancellationToken cancellationToken = default)
         {
-            return await GetBySidWithOptions(sid, new Dictionary<string, string>(), cancellationToken);
+            return await GetBySidWithParams(sid, new Dictionary<string, string>(), cancellationToken);
         }
 
-        public async Task<ApiSubject> GetBySidWithOptions(string sid, Dictionary<string, string> options, CancellationToken cancellationToken = default)
+        public async Task<ApiSubject> GetBySidWithParams(string sid, Dictionary<string, string> parameters, CancellationToken cancellationToken = default)
         {
-            var posterSize = options.FirstOrDefault(x => x.Key.Equals("PosterSize")).Value;
-            string url = $"{ApiBaseUri}/movies/{sid}?s={posterSize}";
+            string url = $"{ApiBaseUri}/movies/{sid}";
+            var requestUri = new Uri(QueryHelpers.AddQueryString(url, parameters));
 
-            HttpResponseMessage response = await httpClientFactory.CreateClient().GetAsync(url, cancellationToken).ConfigureAwait(false);
+            HttpResponseMessage response = await httpClientFactory.CreateClient().GetAsync(requestUri, cancellationToken).ConfigureAwait(false);
             response.EnsureSuccessStatusCode();
             Stream content = await response.Content.ReadAsStreamAsync(cancellationToken);
             ApiSubject result = await jsonSerializer.DeserializeFromStreamAsync<ApiSubject>(content);
