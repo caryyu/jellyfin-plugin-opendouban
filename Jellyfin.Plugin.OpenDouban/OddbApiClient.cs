@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using MediaBrowser.Model.Serialization;
 using System.Threading.Tasks;
@@ -68,12 +69,13 @@ namespace Jellyfin.Plugin.OpenDouban
 
         public async Task<ApiSubject> GetBySid(string sid, CancellationToken cancellationToken = default)
         {
-            return await GetBySidWithOptions(sid, new GetBySidOptions(), cancellationToken);
+            return await GetBySidWithOptions(sid, new Dictionary<string, string>(), cancellationToken);
         }
 
-        public async Task<ApiSubject> GetBySidWithOptions(string sid, GetBySidOptions options, CancellationToken cancellationToken = default)
+        public async Task<ApiSubject> GetBySidWithOptions(string sid, Dictionary<string, string> options, CancellationToken cancellationToken = default)
         {
-            string url = $"{ApiBaseUri}/movies/{sid}?s={options.PosterSize}";
+            var posterSize = options.FirstOrDefault(x => x.Key.Equals("PosterSize")).Value;
+            string url = $"{ApiBaseUri}/movies/{sid}?s={posterSize}";
 
             HttpResponseMessage response = await httpClientFactory.CreateClient().GetAsync(url, cancellationToken).ConfigureAwait(false);
             response.EnsureSuccessStatusCode();
@@ -206,10 +208,5 @@ namespace Jellyfin.Plugin.OpenDouban
         public string Size { get; set; }
         public int Width { get; set; }
         public int Height { get; set; }
-    }
-
-    public class GetBySidOptions
-    {
-        public string PosterSize { get; set; }
     }
 }
