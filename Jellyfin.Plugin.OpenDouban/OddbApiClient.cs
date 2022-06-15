@@ -68,7 +68,12 @@ namespace Jellyfin.Plugin.OpenDouban
 
         public async Task<ApiSubject> GetBySid(string sid, CancellationToken cancellationToken = default)
         {
-            string url = $"{ApiBaseUri}/movies/{sid}";
+            return await GetBySidWithOptions(sid, new GetBySidOptions(), cancellationToken);
+        }
+
+        public async Task<ApiSubject> GetBySidWithOptions(string sid, GetBySidOptions options, CancellationToken cancellationToken = default)
+        {
+            string url = $"{ApiBaseUri}/movies/{sid}?s={options.PosterSize}";
 
             HttpResponseMessage response = await httpClientFactory.CreateClient().GetAsync(url, cancellationToken).ConfigureAwait(false);
             response.EnsureSuccessStatusCode();
@@ -201,5 +206,10 @@ namespace Jellyfin.Plugin.OpenDouban
         public string Size { get; set; }
         public int Width { get; set; }
         public int Height { get; set; }
+    }
+
+    public class GetBySidOptions
+    {
+        public string PosterSize { get; set; }
     }
 }
