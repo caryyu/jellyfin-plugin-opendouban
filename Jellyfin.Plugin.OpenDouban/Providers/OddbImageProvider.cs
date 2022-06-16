@@ -64,7 +64,8 @@ namespace Jellyfin.Plugin.OpenDouban.Providers
                 return new List<RemoteImageInfo>();
             }
 
-            var primary = await _oddbApiClient.GetBySid(sid, cancellationToken);
+            var parameters = new Dictionary<string, string>() {{ "s", OddbPlugin.Instance?.Configuration.PosterSize }};
+            var primary = await _oddbApiClient.GetBySidWithParams(sid, parameters, cancellationToken);
             var dropback = await GetBackdrop(sid, cancellationToken);
 
             var res = new List<RemoteImageInfo> {
