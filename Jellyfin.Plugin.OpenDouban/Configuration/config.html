@@ -19,6 +19,14 @@
                         <input id="Pattern" name="Pattern" type="text" is="emby-input" />
                         <div class="fieldDescription">A regular expression filtering media name, for example: The.Lion.King.2019.1080p.BluRay.x264-[YTS.LT].mp4 >> The Lion King 2019</div>
                     </div>
+                    <div class="selectContainer">
+                        <label class="selectLabel inputLabelUnfocused" for="PosterSize">Poster Size</label>
+                        <select id="PosterSize" name="PosterSize" type="select" is="emby-select">
+                            <option value="s">Small</option>
+                            <option value="m">Medium</option>
+                            <option value="l">Large</option>
+                        </select>
+                    </div>
                     <div>
                         <button is="emby-button" type="submit" class="raised button-submit block emby-button">
                             <span>Save</span>
@@ -37,6 +45,7 @@
                 ApiClient.getPluginConfiguration(DoubanProviderConfig.pluginUniqueId).then(function (config) {
                     $('#ApiBaseUri').val(config.ApiBaseUri).change();
                     $('#Pattern').val(config.Pattern).change();
+                    $('#PosterSize').val(config.PosterSize).change();
                     Dashboard.hideLoadingMsg();
                 });
             });
@@ -46,6 +55,7 @@
                 ApiClient.getPluginConfiguration(DoubanProviderConfig.pluginUniqueId).then(function (config) {
                     config.ApiBaseUri = $('#ApiBaseUri').val();
                     config.Pattern = $('#Pattern').val();
+                    config.PosterSize = $('#PosterSize').val();
                     ApiClient.updatePluginConfiguration(DoubanProviderConfig.pluginUniqueId, config).then(function (result) {
                         Dashboard.processPluginConfigurationUpdateResult(result);
                     });
