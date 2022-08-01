@@ -84,7 +84,9 @@ namespace Jellyfin.Plugin.OpenDouban.Providers
         public async Task<HttpResponseMessage> GetImageResponse(string url, CancellationToken cancellationToken)
         {
             _logger.LogInformation("[DOUBAN] GetImageResponse url: {0}", url);
-            HttpResponseMessage response = await _httpClientFactory.CreateClient().GetAsync(url, cancellationToken).ConfigureAwait(false);
+            var client =  _httpClientFactory.CreateClient();
+            client.DefaultRequestHeaders.Referrer = new Uri("https://movie.douban.com/");
+            HttpResponseMessage response = await client.GetAsync(url, cancellationToken).ConfigureAwait(false);
             response.EnsureSuccessStatusCode();
             return response;
         }
